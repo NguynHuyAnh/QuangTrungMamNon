@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Điểm danh - Mầm Non Portal</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary": "#ffffff",
+                        "surface-container-highest": "#dce2f7",
+                        "on-secondary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-container": "#5c2400",
+                        "tertiary-fixed": "#dde1ff",
+                        "surface-dim": "#d3daef",
+                        "tertiary-fixed-dim": "#b8c4ff",
+                        "inverse-on-surface": "#edf0ff",
+                        "on-tertiary-fixed": "#001453",
+                        "surface-tint": "#345baf",
+                        "on-tertiary": "#ffffff",
+                        "on-surface-variant": "#434652",
+                        "on-primary-container": "#8dadff",
+                        "surface": "#f9f9ff",
+                        "tertiary-container": "#0f36a6",
+                        "on-primary-fixed": "#001947",
+                        "primary-fixed": "#dae2ff",
+                        "on-error": "#ffffff",
+                        "on-tertiary-container": "#97abff",
+                        "tertiary": "#00227a",
+                        "inverse-surface": "#293040",
+                        "secondary-container": "#fd761a",
+                        "on-background": "#141b2b",
+                        "on-secondary-fixed-variant": "#783200",
+                        "secondary-fixed-dim": "#ffb690",
+                        "secondary-fixed": "#ffdbca",
+                        "outline": "#747783",
+                        "surface-variant": "#dce2f7",
+                        "on-surface": "#141b2b",
+                        "on-secondary-fixed": "#341100",
+                        "surface-container-high": "#e1e8fd",
+                        "inverse-primary": "#b1c5ff",
+                        "background": "#f9f9ff",
+                        "surface-container-low": "#f1f3ff",
+                        "surface-bright": "#f9f9ff",
+                        "primary-container": "#0b3d91",
+                        "on-error-container": "#93000a",
+                        "outline-variant": "#c4c6d3",
+                        "surface-container": "#e9edff",
+                        "primary": "#002869",
+                        "on-tertiary-fixed-variant": "#173bab",
+                        "primary-fixed-dim": "#b1c5ff",
+                        "on-primary-fixed-variant": "#144296",
+                        "secondary": "#9d4300",
+                        "error": "#ba1a1a",
+                        "error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sm": "8px",
+                        "xs": "4px",
+                        "sidebar-width": "260px",
+                        "base": "4px",
+                        "container-max": "1440px",
+                        "lg": "24px",
+                        "gutter": "20px",
+                        "xl": "32px",
+                        "md": "16px"
+                    },
+                    "fontFamily": {
+                        "h1": ["Inter"],
+                        "h3": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "h2": ["Inter"]
+                    },
+                    "fontSize": {
+                        "h1": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "h3": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
+                        "h2": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; background-color: #f9f9ff; }
+        .glass-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(8px); }
+    </style>
+</head>
+<body class="text-on-background">
+<!-- TopNavBar -->
+<header class="bg-white dark:bg-slate-900 shadow-sm dark:shadow-none flex justify-between items-center px-6 h-16 w-full fixed top-0 z-50 border-b border-slate-200 dark:border-slate-800">
+<div class="text-xl font-bold text-blue-900 dark:text-white font-['Inter'] antialiased">Preschool Portal</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors rounded-full active:scale-95 transition-transform">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors rounded-full active:scale-95 transition-transform">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</header>
+<!-- SideNavBar (Hidden on Mobile) -->
+<aside class="hidden lg:flex flex-col fixed left-0 top-0 h-full w-64 pt-20 pb-6 z-40 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 font-['Inter'] text-sm font-medium">
+<div class="px-6 mb-8">
+<h2 class="text-lg font-black text-blue-900 dark:text-white">Mầm Non Portal</h2>
+<p class="text-xs text-slate-500 uppercase tracking-wider">Phụ huynh</p>
+</div>
+<nav class="flex-1 px-3 space-y-1">
+<a class="flex items-center px-3 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200 rounded-lg group" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="home">home</span>
+                Trang chủ
+            </a>
+<a class="flex items-center px-3 py-3 bg-blue-50 dark:bg-blue-900/20 text-blue-900 dark:text-blue-300 border-r-4 border-blue-900 dark:border-blue-400 font-bold transition-all duration-200 rounded-l-lg" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="calendar_today">calendar_today</span>
+                Điểm danh
+            </a>
+<a class="flex items-center px-3 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="campaign">campaign</span>
+                Thông báo
+            </a>
+</nav>
+<div class="px-3 pt-6 border-t border-slate-100 dark:border-slate-800 space-y-1">
+<a class="flex items-center px-3 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="settings">settings</span>
+                Cài đặt
+            </a>
+<a class="flex items-center px-3 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="logout">logout</span>
+                Đăng xuất
+            </a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="lg:ml-64 pt-24 pb-24 px-gutter">
+<div class="max-w-container-max mx-auto">
+<!-- Page Header & Filters -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-md mb-xl">
+<div>
+<h1 class="font-h1 text-h1 text-primary mb-xs">Theo dõi điểm danh</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Xem chi tiết lịch học và chuyên cần của bé.</p>
+</div>
+<div class="flex flex-wrap gap-md">
+<div class="flex flex-col gap-xs">
+<label class="font-label-sm text-label-sm text-outline">Chọn bé</label>
+<select class="rounded-lg border-slate-200 text-body-md px-md py-sm bg-white focus:border-primary focus:ring-1 focus:ring-primary min-w-[180px]">
+<option>Nguyễn Minh Anh - Lớp Lá 1</option>
+<option>Nguyễn Tuấn Kiệt - Lớp Mầm 2</option>
+</select>
+</div>
+<div class="flex flex-col gap-xs">
+<label class="font-label-sm text-label-sm text-outline">Tháng</label>
+<select class="rounded-lg border-slate-200 text-body-md px-md py-sm bg-white focus:border-primary focus:ring-1 focus:ring-primary min-w-[140px]">
+<option selected="">Tháng 10, 2023</option>
+<option>Tháng 09, 2023</option>
+<option>Tháng 08, 2023</option>
+</select>
+</div>
+</div>
+</div>
+<!-- Bento Layout Stats -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter mb-xl">
+<div class="md:col-span-1 bg-white p-lg rounded-xl shadow-sm border border-slate-100 flex flex-col items-center text-center">
+<div class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center text-primary mb-sm">
+<span class="material-symbols-outlined" data-icon="check_circle">check_circle</span>
+</div>
+<span class="font-label-sm text-label-sm text-outline uppercase tracking-tight">Số ngày đi học</span>
+<span class="font-h1 text-h1 text-primary mt-xs">18/22</span>
+</div>
+<div class="md:col-span-1 bg-white p-lg rounded-xl shadow-sm border border-slate-100 flex flex-col items-center text-center">
+<div class="w-12 h-12 rounded-full bg-orange-50 flex items-center justify-center text-secondary mb-sm">
+<span class="material-symbols-outlined" data-icon="event_busy">event_busy</span>
+</div>
+<span class="font-label-sm text-label-sm text-outline uppercase tracking-tight">Nghỉ có phép</span>
+<span class="font-h1 text-h1 text-secondary mt-xs">03</span>
+</div>
+<div class="md:col-span-1 bg-white p-lg rounded-xl shadow-sm border border-slate-100 flex flex-col items-center text-center">
+<div class="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center text-error mb-sm">
+<span class="material-symbols-outlined" data-icon="error">error</span>
+</div>
+<span class="font-label-sm text-label-sm text-outline uppercase tracking-tight">Nghỉ không phép</span>
+<span class="font-h1 text-h1 text-error mt-xs">01</span>
+</div>
+<div class="md:col-span-1 bg-primary-container p-lg rounded-xl shadow-sm border border-primary flex flex-col items-center text-center">
+<div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center text-white mb-sm">
+<span class="material-symbols-outlined" data-icon="trending_up">trending_up</span>
+</div>
+<span class="font-label-sm text-label-sm text-white/70 uppercase tracking-tight">Tỷ lệ chuyên cần</span>
+<span class="font-h1 text-h1 text-white mt-xs">82%</span>
+</div>
+</div>
+<!-- Content Grid: Calendar & List -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-xl">
+<!-- Calendar View (Visual Representation) -->
+<div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+<div class="px-lg py-md border-b border-slate-100 flex justify-between items-center">
+<h3 class="font-h3 text-h3 text-primary">Lịch chi tiết - Tháng 10</h3>
+<div class="flex gap-xs">
+<button class="p-1 hover:bg-slate-50 rounded"><span class="material-symbols-outlined" data-icon="chevron_left">chevron_left</span></button>
+<button class="p-1 hover:bg-slate-50 rounded"><span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span></button>
+</div>
+</div>
+<div class="p-lg">
+<div class="grid grid-cols-7 gap-xs text-center mb-sm">
+<div class="font-label-sm text-label-sm text-outline">T2</div>
+<div class="font-label-sm text-label-sm text-outline">T3</div>
+<div class="font-label-sm text-label-sm text-outline">T4</div>
+<div class="font-label-sm text-label-sm text-outline">T5</div>
+<div class="font-label-sm text-label-sm text-outline">T6</div>
+<div class="font-label-sm text-label-sm text-outline font-bold text-error">T7</div>
+<div class="font-label-sm text-label-sm text-outline font-bold text-error">CN</div>
+</div>
+<div class="grid grid-cols-7 gap-sm">
+<!-- Placeholder dates for visualization -->
+<div class="aspect-square flex items-center justify-center text-slate-300 font-label-md">25</div>
+<div class="aspect-square flex items-center justify-center text-slate-300 font-label-md">26</div>
+<div class="aspect-square flex items-center justify-center text-slate-300 font-label-md">27</div>
+<div class="aspect-square flex items-center justify-center text-slate-300 font-label-md">28</div>
+<div class="aspect-square flex items-center justify-center text-slate-300 font-label-md">29</div>
+<div class="aspect-square flex items-center justify-center text-slate-300 font-label-md">30</div>
+<div class="aspect-square flex items-center justify-center bg-slate-50 rounded-lg text-body-md font-bold">1</div>
+<div class="aspect-square flex flex-col items-center justify-center bg-emerald-50 border border-emerald-100 rounded-lg group relative cursor-pointer">
+<span class="font-label-md text-emerald-700">2</span>
+<div class="w-1 h-1 bg-emerald-500 rounded-full mt-1"></div>
+</div>
+<div class="aspect-square flex flex-col items-center justify-center bg-emerald-50 border border-emerald-100 rounded-lg">
+<span class="font-label-md text-emerald-700">3</span>
+<div class="w-1 h-1 bg-emerald-500 rounded-full mt-1"></div>
+</div>
+<div class="aspect-square flex flex-col items-center justify-center bg-orange-50 border border-orange-100 rounded-lg">
+<span class="font-label-md text-secondary">4</span>
+<div class="w-1 h-1 bg-secondary rounded-full mt-1"></div>
+</div>
+<div class="aspect-square flex flex-col items-center justify-center bg-emerald-50 border border-emerald-100 rounded-lg">
+<span class="font-label-md text-emerald-700">5</span>
+<div class="w-1 h-1 bg-emerald-500 rounded-full mt-1"></div>
+</div>
+<div class="aspect-square flex flex-col items-center justify-center bg-emerald-50 border border-emerald-100 rounded-lg">
+<span class="font-label-md text-emerald-700">6</span>
+<div class="w-1 h-1 bg-emerald-500 rounded-full mt-1"></div>
+</div>
+<div class="aspect-square flex items-center justify-center bg-slate-50 rounded-lg text-body-md font-bold">7</div>
+<div class="aspect-square flex items-center justify-center bg-slate-50 rounded-lg text-body-md font-bold">8</div>
+<!-- Row 2 -->
+<div class="aspect-square flex flex-col items-center justify-center bg-emerald-50 border border-emerald-100 rounded-lg">
+<span class="font-label-md text-emerald-700">9</span>
+<div class="w-1 h-1 bg-emerald-500 rounded-full mt-1"></div>
+</div>
+<div class="aspect-square flex flex-col items-center justify-center bg-emerald-50 border border-emerald-100 rounded-lg">
+<span class="font-label-md text-emerald-700">10</span>
+<div class="w-1 h-1 bg-emerald-500 rounded-full mt-1"></div>
+</div>
+<div class="aspect-square flex flex-col items-center justify-center bg-red-50 border border-red-100 rounded-lg">
+<span class="font-label-md text-error">11</span>
+<div class="w-1 h-1 bg-error rounded-full mt-1"></div>
+</div>
+<div class="aspect-square flex flex-col items-center justify-center bg-emerald-50 border border-emerald-100 rounded-lg">
+<span class="font-label-md text-emerald-700">12</span>
+<div class="w-1 h-1 bg-emerald-500 rounded-full mt-1"></div>
+</div>
+<div class="aspect-square flex flex-col items-center justify-center bg-emerald-50 border border-emerald-100 rounded-lg border-2 border-primary">
+<span class="font-label-md text-primary font-bold">13</span>
+<div class="w-1 h-1 bg-emerald-500 rounded-full mt-1"></div>
+</div>
+<div class="aspect-square flex items-center justify-center bg-slate-50 rounded-lg text-body-md font-bold">14</div>
+<div class="aspect-square flex items-center justify-center bg-slate-50 rounded-lg text-body-md font-bold">15</div>
+</div>
+<div class="mt-lg flex flex-wrap gap-md justify-center">
+<div class="flex items-center gap-xs">
+<div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+<span class="font-label-sm text-label-sm text-outline">Hiện diện</span>
+</div>
+<div class="flex items-center gap-xs">
+<div class="w-3 h-3 rounded-full bg-secondary"></div>
+<span class="font-label-sm text-label-sm text-outline">Nghỉ có phép</span>
+</div>
+<div class="flex items-center gap-xs">
+<div class="w-3 h-3 rounded-full bg-error"></div>
+<span class="font-label-sm text-label-sm text-outline">Nghỉ không phép</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Recent Logs List -->
+<div class="lg:col-span-1 flex flex-col gap-gutter">
+<div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+<div class="px-lg py-md border-b border-slate-100">
+<h3 class="font-h3 text-h3 text-primary">Ghi chú từ giáo viên</h3>
+</div>
+<div class="p-lg space-y-md">
+<div class="p-md rounded-lg bg-surface-container-low border-l-4 border-secondary">
+<div class="flex justify-between items-start mb-xs">
+<span class="font-label-sm text-label-sm text-secondary">Thứ 4, 04/10</span>
+<span class="px-2 py-0.5 rounded-full bg-orange-100 text-secondary text-[10px] font-bold uppercase">Nghỉ có phép</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface italic">"Gia đình xin phép cho bé đi tiêm chủng định kỳ. Cảm ơn cô!"</p>
+<p class="font-label-sm text-label-sm text-outline mt-sm">GV: Cô Thúy Nga</p>
+</div>
+<div class="p-md rounded-lg bg-surface-container-low border-l-4 border-error">
+<div class="flex justify-between items-start mb-xs">
+<span class="font-label-sm text-label-sm text-error">Thứ 4, 11/10</span>
+<span class="px-2 py-0.5 rounded-full bg-red-100 text-error text-[10px] font-bold uppercase">Nghỉ không phép</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface italic">"Hệ thống không nhận được thông báo nghỉ. Giáo viên đã gọi điện nhưng không liên lạc được."</p>
+<p class="font-label-sm text-label-sm text-outline mt-sm">GV: Cô Thúy Nga</p>
+</div>
+<div class="p-md rounded-lg bg-surface-container-low border-l-4 border-emerald-500">
+<div class="flex justify-between items-start mb-xs">
+<span class="font-label-sm text-label-sm text-emerald-600">Thứ 6, 13/10</span>
+<span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-600 text-[10px] font-bold uppercase">Hiện diện</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface italic">"Bé Minh Anh hôm nay ăn ngoan, tham gia hoạt động vẽ tranh rất tích cực."</p>
+<p class="font-label-sm text-label-sm text-outline mt-sm">GV: Cô Thúy Nga</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Full Attendance History Table -->
+<div class="mt-xl bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+<div class="px-lg py-md border-b border-slate-100 flex justify-between items-center">
+<h3 class="font-h3 text-h3 text-primary">Danh sách điểm danh</h3>
+<button class="flex items-center gap-xs text-primary font-label-md hover:underline">
+<span class="material-symbols-outlined text-[18px]" data-icon="download">download</span>
+                        Tải báo cáo (PDF)
+                    </button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-slate-50 border-b border-slate-100">
+<th class="px-lg py-md font-label-sm text-label-sm text-primary uppercase">Ngày</th>
+<th class="px-lg py-md font-label-sm text-label-sm text-primary uppercase">Trạng thái</th>
+<th class="px-lg py-md font-label-sm text-label-sm text-primary uppercase">Giờ đến</th>
+<th class="px-lg py-md font-label-sm text-label-sm text-primary uppercase">Giờ về</th>
+<th class="px-lg py-md font-label-sm text-label-sm text-primary uppercase">Ghi chú giáo viên</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-50">
+<tr class="hover:bg-blue-50/30 transition-colors">
+<td class="px-lg py-md font-body-md text-body-md">Thứ 6, 13/10/2023</td>
+<td class="px-lg py-md">
+<span class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 font-label-sm text-[11px]">ĐÃ ĐẾN</span>
+</td>
+<td class="px-lg py-md font-body-md text-body-md">07:35</td>
+<td class="px-lg py-md font-body-md text-body-md">--:--</td>
+<td class="px-lg py-md font-body-md text-body-md text-outline">Bé khỏe mạnh, vui vẻ.</td>
+</tr>
+<tr class="hover:bg-blue-50/30 transition-colors">
+<td class="px-lg py-md font-body-md text-body-md">Thứ 5, 12/10/2023</td>
+<td class="px-lg py-md">
+<span class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 font-label-sm text-[11px]">ĐÃ ĐẾN</span>
+</td>
+<td class="px-lg py-md font-body-md text-body-md">07:42</td>
+<td class="px-lg py-md font-body-md text-body-md">16:30</td>
+<td class="px-lg py-md font-body-md text-body-md text-outline">Ngoan, ăn hết suất.</td>
+</tr>
+<tr class="hover:bg-blue-50/30 transition-colors">
+<td class="px-lg py-md font-body-md text-body-md">Thứ 4, 11/10/2023</td>
+<td class="px-lg py-md">
+<span class="px-3 py-1 rounded-full bg-red-100 text-error font-label-sm text-[11px]">VẮNG</span>
+</td>
+<td class="px-lg py-md font-body-md text-body-md">--:--</td>
+<td class="px-lg py-md font-body-md text-body-md">--:--</td>
+<td class="px-lg py-md font-body-md text-body-md text-error">Vắng không lý do.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="lg:hidden fixed bottom-0 left-0 w-full h-16 flex justify-around items-center px-4 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] font-['Inter'] text-[10px] font-semibold">
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+            Trang chủ
+        </a>
+<a class="flex flex-col items-center justify-center text-blue-900 dark:text-blue-300" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+            Điểm danh
+        </a>
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500" href="#">
+<span class="material-symbols-outlined" data-icon="campaign">campaign</span>
+            Thông báo
+        </a>
+</nav>
+<!-- FAB for parent queries (contextual) -->
+<button class="fixed bottom-20 right-6 lg:bottom-10 lg:right-10 w-14 h-14 bg-secondary-container text-white rounded-full shadow-lg flex items-center justify-center active:scale-95 transition-transform z-50">
+<span class="material-symbols-outlined" data-icon="contact_support">contact_support</span>
+</button>
+</body></html>

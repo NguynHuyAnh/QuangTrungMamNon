@@ -1,0 +1,362 @@
+================================================================================
+  ĐỒ ÁN: WEBSITE QUẢN LÝ HỌC SINH TRƯỜNG MẦM NON QUANG TRUNG - TRÂU QUỲ
+  Công nghệ: ASP.NET Core Web API (C#) | React | PostgreSQL
+================================================================================
+Phiên bản tài liệu: 1.0
+Ngày: 04/05/2026
+
+--------------------------------------------------------------------------------
+MỤC LỤC
+--------------------------------------------------------------------------------
+1. Tổng quan dự án
+2. Kiến trúc & mô hình tổ chức code (đề xuất)
+3. Vai trò (roles) và chức năng chi tiết theo từng role
+4. Thiết kế cơ sở dữ liệu (PostgreSQL)
+5. Các chức năng bổ sung gợi ý (ngoài core)
+6. Kế hoạch triển khai theo giai đoạn (plan chi tiết)
+7. Ghi chú cho báo cáo đồ án
+
+================================================================================
+1. TỔNG QUAN DỰ ÁN
+================================================================================
+
+Mục tiêu:
+  - Hệ thống hóa quản lý hồ sơ học sinh, lớp học, điểm danh, thông báo,
+    học phí / khoản thu liên quan tại trường mầm non.
+  - Phân quyền rõ ràng: Ban giám hiệu, giáo viên, kế toán, phụ huynh.
+  - Giao diện web hiện đại (React), API REST chuẩn (ASP.NET Core).
+
+Phạm vi đồ án sinh viên (khuyến nghị):
+  - Ưu tiên các luồng: đăng nhập, quản lý trẻ/lớp, điểm danh, xem thông báo,
+    báo cáo đơn giản, quản lý khoản thu cơ bản.
+  - Có thể mở rộng sau: nhật ký hoạt động, gallery ảnh, khảo sát phụ huynh.
+
+--------------------------------------------------------------------------------
+2. KIẾN TRÚC & MÔ HÌNH TỔ CHỨC CODE
+--------------------------------------------------------------------------------
+
+2.1. Kiến trúc tổng thể (khuyến nghị cho đồ án + dễ bảo vệ)
+
+  Client (React SPA)
+       |
+       | HTTPS / JSON (JWT Bearer)
+       v
+  ASP.NET Core Web API
+       |
+       v
+  PostgreSQL
+
+2.2. Mô hình tổ chức backend: CLEAN ARCHITECTURE (rút gọn cho đồ án)
+
+  Lý do chọn:
+  - Tách rõ: Domain (nghiệp vụ thuần), Application (use case), Infrastructure
+    (EF Core, email, file), API (controller).
+  - Giảng viên thường đánh giá cao cấu trúc rõ ràng, dễ test từng lớp.
+  - Phù hợp với ASP.NET Core và có nhiều tài liệu / template chính thức.
+
+  Cấu trúc solution gợi ý:
+
+  QuangTrungKindergarten.sln
+  |
+  +-- backend/
+  |     +-- QuangTrung.Domain/           // Entities, Enums, Domain events (tối giản)
+  |     +-- QuangTrung.Application/      // DTOs, Interfaces, Services, Validators
+  |     +-- QuangTrung.Infrastructure/   // EF Core DbContext, Repositories, JWT, Email
+  |     +-- QuangTrung.Api/              // Controllers, Middleware, Program.cs
+  |
+  +-- tests/ (tùy chọn cho đồ án)
+        +-- QuangTrung.Application.Tests/
+
+  Pattern bổ trợ:
+  - Repository + Unit of Work (hoặc chỉ DbContext trực tiếp nếu đơn giản hóa).
+  - CQRS nhẹ: có thể chỉ áp dụng cho vài module phức tạp (không bắt buộc toàn bộ).
+
+2.3. Tổ chức frontend React
+
+  - react-router-dom: định tuyến theo role (ProtectedRoute).
+  - state: Redux Toolkit HOẶC Zustand (chọn một; Zustand gọn cho đồ án).
+  - HTTP: axios + interceptors (gắn JWT, xử lý 401).
+  - UI: Ant Design hoặc MUI (tiết kiệm thời gian, giao diện đẹp).
+  - Thư mục gợi ý:
+
+  frontend/
+    src/
+      api/           // client gọi API
+      components/    // component tái sử dụng
+      features/      // theo module: auth, students, classes, attendance...
+      layouts/
+      routes/
+      store/
+      utils/
+
+2.4. Bảo mật API
+
+  - ASP.NET Core Identity (hoặc.Identity JWT custom) + Role-based authorization.
+  - Refresh token (tùy chọn; có thể chỉ access token + thời hạn ngắn cho đồ án).
+  - CORS cấu hình chỉ cho origin của React dev/prod.
+
+================================================================================
+3. VAI TRÒ (ROLES) VÀ CHỨC NĂNG CHI TIẾT
+================================================================================
+
+Gợi ý 5 role chính (có thể gộp Admin + BanGiámHiệu nếu muốn giảm độ phức tạp):
+
+  R1. SuperAdmin / IT (tùy chọn – chỉ khi cần demo quản trị hệ thống)
+  R2. BanGiámHiệu (Hiệu trưởng / Phó hiệu trưởng)
+  R3. GiaoVien (Giáo viên chủ nhiệm / giáo viên bộ môn)
+  R4. KeToan
+  R5. PhuHuynh
+
+--------------------------------------------------------------------------------
+3.1. Role: BanGiámHiệu
+--------------------------------------------------------------------------------
+
+  Chức năng:
+  - Xem dashboard tổng quan: số trẻ theo lớp, tỷ lệ đi học tuần hiện tại,
+    cảnh báo trẻ nghỉ nhiều ngày liên tiếp (nếu có rule).
+  - Quản lý năm học, khối, lớp: tạo/sửa/xóa (soft delete) lớp; gán giáo viên chủ nhiệm.
+  - Quản lý danh mục: dịch vụ ăn sáng/trưa, hoạt động ngoại khóa (master data).
+  - Duyệt / phát hành thông báo toàn trường (draft → published).
+  - Xem báo cáo: điểm danh theo lớp/khoảng thời gian; tình hình thu học phí tổng hợp
+    (read-only hoặc export Excel/PDF – tùy thời gian).
+  - Phân quyền người dùng nội bộ (gán role GiaoVien, KeToan) – có thể giao cho
+    SuperAdmin nếu tách role.
+
+--------------------------------------------------------------------------------
+3.2. Role: GiaoVien
+--------------------------------------------------------------------------------
+
+  Chức năng:
+  - Xem danh sách lớp được phân công; xem hồ sơ trẻ trong lớp (thông tin được phép:
+    họ tên, ngày sinh, phụ huynh, dị ứng, ghi chú sức khỏe nếu có).
+  - Điểm danh hàng ngày: có mặt / vắng / muộn / lý do nghỉ (ốm, việc gia đình…).
+  - Ghi nhật ký hoạt động trong ngày (text/ngắn) – module tùy chọn.
+  - Gửi thông báo lớp đến phụ huynh lớp mình (hoặc chỉ draft gửi BanGiámHiệu duyệt –
+    tùy quy trình bạn chọn cho đồ án).
+  - Đánh giá / nhận xét định kỳ (theo tuần/tháng) – form đơn giản.
+  - Upload ảnh hoạt động (giới hạn dung lượng) – tùy chọn.
+
+--------------------------------------------------------------------------------
+3.3. Role: KeToan
+--------------------------------------------------------------------------------
+
+  Chức năng:
+  - Cấu hình biểu phí theo năm học: học phí, tiền ăn, phụ phí…
+  - Lập phiếu thu / ghi nhận thanh toán (tiền mặt, chuyển khoản – ghi nhận thủ công
+    cho đồ án; tích hợp cổng thanh toán là phần mở rộng).
+  - Theo dõi công nợ theo trẻ: đã thu, còn nợ, hạn thanh toán.
+  - Xuất báo cáo thu theo tháng/quý (Excel).
+  - Không chỉnh sửa điểm danh / hồ sơ sức khỏe chi tiết (tránh xung đột nghiệp vụ)
+    – chỉ xem thông tin trẻ phục vụ thu phí.
+
+--------------------------------------------------------------------------------
+3.4. Role: PhuHuynh
+--------------------------------------------------------------------------------
+
+  Chức năng:
+  - Đăng ký / được cấp tài khoản liên kết với hồ sơ trẻ (một phụ huynh có thể
+    nhiều trẻ).
+  - Xem điểm danh, thông báo từ lớp/trường.
+  - Xem lịch thanh toán, số tiền phải đóng, lịch sử thanh toán (read-only).
+  - Cập nhật một số thông tin liên hệ (SĐT, địa chỉ) nếu được phép.
+  - Đăng ký nghỉ có phép trước (đơn xin nghỉ) – luồng đơn giản: gửi → GV duyệt.
+
+--------------------------------------------------------------------------------
+3.5. Role: SuperAdmin (tùy chọn)
+--------------------------------------------------------------------------------
+
+  - Quản lý user toàn hệ thống, reset mật khẩu, khóa tài khoản.
+  - Cấu hình tham số hệ thống (tên trường, logo – URL).
+  - Xem log audit (nếu triển khai).
+
+--------------------------------------------------------------------------------
+Bảng tóm tắt quyền (matrix ngắn)
+
+  Chức năng                          | BanGiámHiệu | GiaoVien | KeToan | PhuHuynh
+  -----------------------------------|-------------|----------|--------|----------
+  CRUD lớp / phân công GV            | Có          | Không    | Không  | Không
+  Điểm danh                          | Xem all     | Lớp mình | Không  | Xem con
+  Thu phí / phiếu thu                | Xem         | Không    | Có     | Xem của mình
+  Thông báo toàn trường              | Duyệt       | Theo quy | Không  | Nhận
+  Hồ sơ trẻ (đầy đủ)                 | Có          | Lớp mình | Hạn chế| Con mình
+
+================================================================================
+4. THIẾT KẾ CƠ SỞ DỮ LIỆU (POSTGRESQL)
+================================================================================
+
+Nguyên tắc:
+  - Khóa chính dạng UUID (uuid) hoặc BIGSERIAL tùy đội ngũ; đồ án nên thống nhất.
+  - Soft delete: cột IsDeleted, DeletedAt cho bảng quan trọng.
+  - Audit: CreatedAt, UpdatedAt, CreatedBy, UpdatedBy (ApplicationUser).
+
+--------------------------------------------------------------------------------
+4.1. Nhóm Identity & phân quyền
+--------------------------------------------------------------------------------
+
+  AspNetUsers (mở rộng từ Identity)
+    - Id (uuid)
+    - FullName, Phone, IsActive
+    - … các field mặc định Identity
+
+  AspNetRoles
+    - Id, Name (BanGiamHieu, GiaoVien, KeToan, PhuHuynh, SuperAdmin)
+
+  UserStudentLink (phụ huynh – nhiều trẻ)
+    - UserId, StudentId, Relationship (Bố/Mẹ/Người giám hộ), IsPrimary
+
+--------------------------------------------------------------------------------
+4.2. Nhóm danh mục & tổ chức
+--------------------------------------------------------------------------------
+
+  SchoolYears
+    - Id, Name (VD: 2025-2026), StartDate, EndDate, IsCurrent
+
+  Grades (Khối: Nhà trẻ, Mẫu giá…)
+    - Id, Name, SortOrder
+
+  Classes
+    - Id, SchoolYearId, GradeId, Name, HomeroomTeacherId (nullable FK User)
+    - Capacity
+
+--------------------------------------------------------------------------------
+4.3. Học sinh
+--------------------------------------------------------------------------------
+
+  Students
+    - Id, FullName, Gender, DateOfBirth, Ethnicity (optional)
+    - Address, AvatarUrl (optional)
+    - HealthNote, AllergyNote (text)
+    - Status (DangHoc, TamNghi, DaNghiHoc)
+    - CreatedAt, UpdatedAt
+
+  StudentClassAssignments (lịch sử trẻ – lớp theo năm)
+    - Id, StudentId, ClassId, SchoolYearId, FromDate, ToDate
+
+--------------------------------------------------------------------------------
+4.4. Điểm danh
+--------------------------------------------------------------------------------
+
+  AttendanceSessions (optional – hoặc gộp theo ngày+lớp)
+    - Id, ClassId, Date, Slot (CaSang, CaChieu, CaNgay) – tùy trường
+
+  AttendanceRecords
+    - Id, StudentId, ClassId, Date
+    - Status (CoMat, Vang, Muon, NghiCoPhep)
+    - Reason (nullable)
+    - RecordedByUserId, RecordedAt
+
+--------------------------------------------------------------------------------
+4.5. Thông báo
+--------------------------------------------------------------------------------
+
+  Announcements
+    - Id, Title, Body, Scope (ToanTruong, TheoLop), ClassId (nullable)
+    - Status (Draft, Published), PublishedAt
+    - CreatedByUserId
+
+  AnnouncementReads (optional – đã đọc)
+    - UserId, AnnouncementId, ReadAt
+
+--------------------------------------------------------------------------------
+4.6. Tài chính
+--------------------------------------------------------------------------------
+
+  FeeStructures (biểu phí theo năm)
+    - Id, SchoolYearId, Name, Amount, FeeType (HocPhi, TienAn…)
+
+  StudentFeeAssignments (áp phí cho trẻ)
+    - Id, StudentId, SchoolYearId, FeeStructureId, Month (1-12), AmountOverride
+
+  Payments
+    - Id, StudentId, Amount, PaidAt, Method (TienMat, ChuyenKhoan)
+    - ReceiptNumber, Note, RecordedByUserId
+
+  (Công nợ có thể tính view/query từ assignments – payments, không cần bảng riêng
+   nếu muốn đơn giản.)
+
+--------------------------------------------------------------------------------
+4.7. Đánh giá / nhận xét (tùy chọn)
+--------------------------------------------------------------------------------
+
+  StudentEvaluations
+    - Id, StudentId, ClassId, PeriodType (Tuan, Thang), PeriodStart, PeriodEnd
+    - Content (text), Rating (1-5 optional), CreatedByUserId
+
+--------------------------------------------------------------------------------
+4.8. Audit (tùy chọn)
+--------------------------------------------------------------------------------
+
+  AuditLogs
+    - Id, UserId, Action, EntityName, EntityId, OldJson, NewJson, Timestamp
+
+--------------------------------------------------------------------------------
+4.9. Sơ đồ quan hệ (mô tả)
+
+  SchoolYears 1--* Classes
+  Grades 1--* Classes
+  Classes *--* Students (qua StudentClassAssignments)
+  Students 1--* AttendanceRecords
+  Students 1--* Payments
+  Users *--* Students (qua UserStudentLink – PhuHuynh)
+  Users 1--* Classes (HomeroomTeacher)
+
+================================================================================
+5. CÁC CHỨC NĂNG BỔ SUNG GỢI Ý
+================================================================================
+
+  - Thống kê biểu đồ (Chart.js / Recharts): tỷ lệ đi học theo tháng.
+  - Export Excel (ClosedXML hoặc EPPlus phía API).
+  - Đa ngôn ngữ UI (i18n) – nếu trường cần Việt/Anh.
+  - Dark mode (React theme).
+  - Thông báo real-time: SignalR (nâng cao – demo được điểm cộng).
+  - Lịch hoạt động / sự kiện trường (calendar).
+  - Kho tài liệu mẫu (upload PDF hướng dẫn phụ huynh).
+  - QR check-in (phức tạp – chỉ nên nếu còn thời gian).
+
+================================================================================
+6. KẾ HOẠCH TRIỂN KHAI THEO GIAI ĐOẠN (PLAN CHI TIẾT)
+================================================================================
+
+Giai đoạn 0 – Chuẩn bị (1 tuần)
+  - Xác nhận phạm vi với GVHD.
+  - Cài đặt: .NET SDK, Node.js, PostgreSQL, pgAdmin, Git.
+  - Tạo repo, README, branch develop.
+
+Giai đoạn 1 – Nền tảng (1–2 tuần)
+  - Tạo solution Clean Architecture; Api + Domain + Application + Infrastructure.
+  - Cấu hình EF Core + PostgreSQL; migration đầu tiên (Users/Roles).
+  - Triển khai Identity + JWT; endpoint đăng nhập, đổi mật khẩu.
+  - React: layout, login page, route bảo vệ, gọi API thử.
+
+Giai đoạn 2 – Quản lý danh mục & hồ sơ (2 tuần)
+  - CRUD SchoolYear, Grade, Class.
+  - CRUD Student, gán vào lớp theo năm học.
+  - API + UI phân quyền theo role (BanGiámHiệu / GV).
+
+Giai đoạn 3 – Điểm danh & thông báo (1–2 tuần)
+  - API điểm danh theo ngày/lớp; báo cáo đơn giản.
+  - CRUD thông báo; PhuHuynh xem danh sách.
+
+Giai đoạn 4 – Thu phí (1–2 tuần)
+  - Biểu phí, gán phí, phiếu thu, báo cáo công nợ đơn giản.
+
+Giai đoạn 5 – Hoàn thiện đồ án (1–2 tuần)
+  - Kiểm thử thủ công theo kịch bản; sửa lỗi.
+  - Viết báo cáo: sơ đồ use case, ERD, ảnh chụp màn hình.
+  - Chuẩn bị slide bảo vệ; seed dữ liệu demo.
+
+Tổng thời gian ước lượng: 7–10 tuần (tùy 1 sinh viên hay nhóm).
+
+================================================================================
+7. GHI CHÚ CHO BÁO CÁO ĐỒ ÁN
+================================================================================
+
+  - Nêu rõ lý do chọn Clean Architecture + REST API + SPA.
+  - Vẽ Use Case diagram theo từng actor (role).
+  - Vẽ ERD (công cụ: dbdiagram.io, draw.io).
+  - Liệt kê API chính (bảng endpoint / Swagger).
+  - Nêu hạn chế: chưa tích hợp cổng thanh toán thật, chưa app mobile, v.v.
+
+================================================================================
+HẾT TÀI LIỆU
+================================================================================

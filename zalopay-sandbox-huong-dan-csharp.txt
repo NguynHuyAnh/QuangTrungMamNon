@@ -1,0 +1,392 @@
+================================================================================
+  ZaloPay SANDBOX — LUỒNG THANH TOÁN, API /v2/create, MAC & HƯỚNG C# (.NET)
+  Tham khảo: developers.zalopay.vn (API v2) + repo zalopay-samples (app 2554)
+================================================================================
+
+MỤC LỤC
+--------
+1. Tổng quan & luồng thanh toán
+2. Endpoint sandbox vs production & credential (app_id, key1, key2)
+3. API tạo đơn: POST /v2/create
+4. Chuỗi dữ liệu ký MAC (HMAC-SHA256, key1) — tạo đơn
+5. Tham số request / response create (return_code = 1 là thành công)
+6. order_url, QR, redirect sau thanh toán (embed_data.redirecturl)
+7. Callback server-to-server (POST JSON, xác thực bằng key2)
+8. API truy vấn đơn: POST /v2/query (MAC riêng)
+9. Mã lỗi thường gặp (sub_return_code -68, 429 rate limit)
+10. Dữ liệu test thẻ / OTP (sandbox)
+11. Gợi ý triển khai C# (HttpClient, form POST, HMAC)
+12. Khớp với project bookstore (Python) & file .env
+13. Link tài liệu & mã mẫu
+
+
+================================================================================
+1. TỔNG QUAN & LUỒNG THANH TOÁN
+================================================================================
+
+ZaloPay Payment Gateway v2 dùng mô hình:
+  (1) **Merchant server** gọi **POST /v2/create** (body dạng form hoặc JSON/XML
+      theo doc) kèm **mac** (HMAC-SHA256 với **key1**).
+  (2) ZaloPay trả JSON: nếu **return_code = 1** thì có **order_url** (mở cổng /
+      tạo QR), có thể kèm **zp_trans_token**, **order_token**, **qr_code** (VietQR).
+  (3) Khách thanh toán trên cổng ZaloPay.
+  (4) Sau khi **thu tiền thành công**, ZaloPay gọi **Callback URL** (POST JSON)
+      tới server merchant — dùng **key2** để verify **mac** trên trường `data`.
+  (5) Merchant có thể dùng **GET redirect** về `redirecturl` trong **embed_data**
+      để UX trình duyệt (không thay thế verify callback + query khi cần).
+
+Luồng an toàn khuyến nghị:
+  - Coi **server callback (POST + mac key2)** là nguồn chốt trạng thái **paid**.
+  - Dùng **POST /v2/query** chủ động tra cứu nếu nghi callback miss (mạng, 5xx).
+  - **app_trans_id** phải **unique** toàn hệ thống ZaloPay theo app (trùng → lỗi).
+
+
+================================================================================
+2. ENDPOINT SANDBOX VS PRODUCTION & CREDENTIAL
+================================================================================
+
+**Tạo đơn (Create order)**
+
+  Sandbox:   POST https://sb-openapi.zalopay.vn/v2/create
+  Production: POST https://openapi.zalopay.vn/v2/create
+
+**Truy vấn đơn (Query)**
+
+  Sandbox:   POST https://sb-openapi.zalopay.vn/v2/query
+  Production: POST https://openapi.zalopay.vn/v2/query
+
+**Bộ thông tin ứng dụng (mỗi môi trường một bộ):**
+
+  app_id   : Định danh ứng dụng (số, ví dụ 2554 cho sandbox sample).
+  key1     : Dùng tạo **mac** khi **gọi API** create/query (và một số API khác).
+  key2     : “Callback key” — dùng verify **mac** của body **callback** từ ZaloPay.
+
+**Credential sandbox công khai app 2554** (dùng cho dev / demo — nguồn chính thức):
+
+  https://github.com/zalopay-samples/test-apps/blob/main/credentials/app-2554.env
+
+  Khớp với file .env project bookstore:
+
+    ZALOPAY_APP_ID=2554
+    ZALOPAY_KEY1=sdngKKJmqEMzvh5QQcdD2A9XBSKUNaYn
+    ZALOPAY_KEY2=trMrHtvjo6myautxDUiAcYsVtaeQ8nhf
+    ZALOPAY_ENDPOINT=https://sb-openapi.zalopay.vn/v2/create
+
+  **Production:** đăng ký ứng dụng trên cổng ZaloPay, lấy app_id/key1/key2 riêng;
+  không dùng bộ 2554 cho go-live.
+
+
+================================================================================
+3. API TẠO ĐƠN: POST /v2/create
+================================================================================
+
+**Content-Type (theo tài liệu ZaloPay):** có thể dùng
+  application/x-www-form-urlencoded
+  hoặc application/json / application/xml
+
+Project bookstore (Flask) dùng **application/x-www-form-urlencoded** (`requests.post(..., data=params)`).
+
+**Các tham số tiêu biểu (bảng tóm tắt theo developers.zalopay.vn):**
+
+  app_id         Bắt buộc   Chuỗi số app (ví dụ "2554")
+  app_user       Bắt buộc   Định danh user phía merchant (string)
+  app_time       Bắt buộc   Timestamp milliseconds (Unix ms), ví dụ DateTimeOffset.UtcNow hoặc GMT+7 theo doc sample
+  app_trans_id   Bắt buộc   Mã giao dịch đối tác — định dạng khuyến nghị: **yyMMdd_** + phần unique
+  amount         Bắt buộc   Số tiền VND (số nguyên đồng, không nhân 100)
+  description    Bắt buộc   Mô tả đơn / cửa hàng
+  embed_data     Bắt buộc   Chuỗi **JSON** (có thể "{}"); có thể chứa **redirecturl**
+  item           Bắt buộc   Chuỗi **JSON array** (có thể "[]")
+  bank_code      Tùy chọn  Có thể để trống "" hoặc ví dụ "zalopayapp" trong sample C# doc
+  callback_url   Tùy chọn  Nếu không gửi, dùng CallbackURL mặc định đã đăng ký app
+  mac            Bắt buộc   HMAC-SHA256 hex (mục 4)
+
+**embed_data.redirecturl (theo doc ZaloPay):**
+  JSON ví dụ: {"redirecturl":"https://your-domain/result"}
+  ZaloPay sẽ redirect khách về URL này sau thanh toán (ghi đè URL đăng ký app nếu có cơ chế override).
+
+Project bookstore đặt:
+  embed_data = {"redirecturl": "<APP_URL>/payment/callback/zalopay"}
+
+
+================================================================================
+4. CHUỖI DỮ LIỆU KÝ MAC (HMAC-SHA256, KEY1) — TẠO ĐƠN
+================================================================================
+
+Công thức chuẩn (developers.zalopay.vn):
+
+  hmac_input =
+    app_id + "|" + app_trans_id + "|" + app_user + "|" + amount + "|"
+    + app_time + "|" + embed_data + "|" + item
+
+  mac = HMAC_SHA256( key = key1, data = hmac_input ).ToHexLowerCase()
+
+**Quy tắc quan trọng:**
+  - **amount** trong chuỗi ký phải **trùng ký tự** với giá trị gửi trong request
+    (thường là chuỗi số nguyên không định dạng phần nghìn), ví dụ "50000" hoặc
+    cùng cách serialize với field form.
+  - **embed_data** và **item** phải là **đúng chuỗi JSON** bạn gửi trong body
+    (thứ tự key trong JSON nếu lệch có thể làm mac lệch — nên serialize cố định,
+     ví dụ JsonSerializer không sort lung tung giữa các lần gọi).
+  - Encoding UTF-8 cho byte đưa vào HMAC.
+
+**C# (ví dụ tối giản, không phụ thuộc ZaloPay.Helper):**
+
+  using System.Security.Cryptography;
+  using System.Text;
+
+  static string BuildCreateMac(string key1, string appId, string appTransId,
+      string appUser, string amountStr, string appTimeStr, string embedDataJson, string itemJson)
+  {
+      var data = $"{appId}|{appTransId}|{appUser}|{amountStr}|{appTimeStr}|{embedDataJson}|{itemJson}";
+      using var h = new HMACSHA256(Encoding.UTF8.GetBytes(key1));
+      var hash = h.ComputeHash(Encoding.UTF8.GetBytes(data));
+      var sb = new StringBuilder(hash.Length * 2);
+      foreach (var b in hash) sb.Append(b.ToString("x2"));
+      return sb.ToString();
+  }
+
+Gửi request: `FormUrlEncodedContent` hoặc `multipart/form-data` theo doc; sample
+ZaloPay thường là các cặp key-value form.
+
+
+================================================================================
+5. THAM SỐ RESPONSE CREATE — return_code = 1 LÀ THÀNH CÔNG
+================================================================================
+
+Theo bảng ý nghĩa return_code trong tài liệu ZaloPay (phần create):
+
+  return_code = **1**  → Thành công (có order_url để redirect / QR)
+  return_code = **2**  → Thất bại
+
+**Không nhầm với MoMo/VNPAY** (ở đó 0 là success). Project bookstore kiểm tra đúng:
+
+  if (return_code == 1 && có order_url) → hiển thị QR / link thanh toán.
+
+Các field phổ biến trong JSON response:
+
+  return_message, sub_return_code, sub_return_message
+  order_url      : URL mở cổng thanh toán / deep link gateway
+  zp_trans_token, order_token
+  qr_code        : Chuỗi EMV / VietQR (nếu được cấp — dùng thư viện QR render)
+
+Ví dụ lỗi trùng app_trans_id (doc):
+
+  return_code: 2
+  sub_return_code: -68
+  sub_return_message: Mã giao dịch bị trùng
+
+
+================================================================================
+6. order_url, QR, REDIRECT SAU THANH TOÁN
+================================================================================
+
+- **order_url**: mở trong WebView hoặc `window.location` / `Redirect()` — khách
+  hoàn tất thanh toán trên cổng ZaloPay.
+
+- **QR**: sinh ảnh QR từ nội dung **order_url** (project bookstore dùng thư viện
+  qrcode encode `order_url`).
+
+- **embed_data.redirecturl**: sau khi thanh toán, ZaloPay có thể chuyển khách về
+  URL này (GET, thường kèm tham số như **status**, **apptransid** — tùy phiên bản
+  cổng; kiểm tra thực tế khi tích hợp).
+
+**Lưu ý an toàn:** redirect trình duyệt (GET) **không** thay thế việc nhận **POST
+callback** và verify **mac** bằng **key2**. Trong project bookstore hiện có route
+GET `/payment/callback/zalopay` kiểm tra `status == '1'` và `apptransid` — tiện
+cho demo; production nên bổ sung **POST callback** + verify key2 + idempotent.
+
+
+================================================================================
+7. CALLBACK SERVER-TO-SERVER (POST JSON — KEY2)
+================================================================================
+
+**Khi nào:** Chỉ khi ZaloPay **đã thu tiền khách thành công** mới gọi callback.
+
+**Cấu hình URL:** `callback_url` trong request create, hoặc CallbackURL mặc định
+đã khai báo khi đăng ký app trên cổng ZaloPay.
+
+**Request từ ZaloPay:**
+
+  Method:       POST
+  Content-Type: application/json
+
+  Body dạng:
+  {
+    "data": "<chuỗi JSON escaped — payload giao dịch>",
+    "mac":  "<HMAC hex>",
+    "type": 1
+  }
+
+  type = 1: Order (theo doc)
+
+**Nội dung chuỗi trong `data` (parse JSON sau khi nhận):** gồm các field như
+app_id, app_trans_id, app_time, app_user, amount, embed_data, item,
+zp_trans_id, server_time, channel, merchant_user_id, user_fee_amount,
+discount_amount, ...
+
+**Verify mac:**
+
+  reqmac = HMAC_SHA256( key = key2, data = <nguyên văn chuỗi trường "data"> ).hex()
+
+  So sánh reqmac == mac nhận được (doc dùng so sánh chuỗi hex, chú ý hoa/thường).
+
+**Phản hồi merchant trả về cho ZaloPay** (JSON):
+
+  return_code = **1**  : thành công (đã xử lý đơn)
+  return_code = **2**  : trùng zp_trans_id / app_trans_id (đã phục vụ user trước đó)
+  return_code = **0** (hoặc giá trị doc ghi “thất bại”): ZaloPay **có thể callback
+    lại** (doc ghi tối đa **3 lần** khi exception / lỗi — xem sample catch trả 0).
+
+Luôn trả HTTP 200 kèm JSON theo định dạng doc khi xử lý xong.
+
+**Lưu ý:** Callback URL phải **public HTTPS** (sandbox có thể dùng tunnel ngrok).
+
+
+================================================================================
+8. API TRUY VẤN ĐƠN: POST /v2/query
+================================================================================
+
+Dùng khi nghi callback miss hoặc đối soát.
+
+**Tham số:** app_id, app_trans_id, mac
+
+**MAC query (theo doc ZaloPay):**
+
+  data = app_id + "|" + app_trans_id + "|" + key1
+
+  mac = HMAC_SHA256( key = key1, data = data ).hex()
+
+**return_code (response query):**
+
+  1 : truy vấn thành công (có thông tin đơn / trạng thái)
+  2 : thất bại
+  3 : đơn chưa thanh toán hoặc đang xử lý (theo bảng doc)
+
+Chi tiết field trả về: is_processing, amount, zp_trans_id, ... xem doc đầy đủ.
+
+
+================================================================================
+9. MÃ LỖI & VẬN HÀNH
+================================================================================
+
+- **sub_return_code = -68**: trùng **app_trans_id** — đổi mã giao dịch mới mỗi lần tạo đơn.
+
+- **HTTP 429**: sandbox có thể giới hạn tần suất — project bookstore hiển thị
+  thông báo rate limit; chờ rồi thử lại.
+
+- **app_trans_id định dạng:** doc và sample dùng **yyMMdd_** + phần unique (C#:
+  `DateTime.Now.ToString("yyMMdd") + "_" + id`). Project bookstore:
+  `yyMMdd_order_code` — đảm bảo **order_code** không làm trùng trong cùng ngày
+  giữa các user (nếu order_code global unique thì ổn).
+
+- **Timeout:** nên đặt HttpClient đủ lớn (ví dụ ≥ 30s) tùy mạng.
+
+
+================================================================================
+10. DỮ LIỆU TEST (SANDBOX) — THẺ / OTP
+================================================================================
+
+Chi tiết trong repo: docs/payment-test-data.txt
+
+Tóm tắt:
+
+  OTP đăng ký / xác minh ví sandbox: **111111**
+
+  Thẻ tín dụng — thành công:
+    4111111111111111, NGUYEN VAN A, 01/25, CVV 123
+
+  ATM — thành công:
+    9704540000000062, NGUYEN VAN A, Member since 10/18
+
+  ATM — lỗi (số thẻ khác nhau): thẻ mất/lỗi, timeout, hết tiền — xem file trên.
+
+Link hướng dẫn test chính thức (nếu có thay đổi): cổng developers.zalopay.vn +
+repo zalopay-samples.
+
+
+================================================================================
+11. GỢI Ý TRIỂN KHAI C# (ASP.NET CORE)
+================================================================================
+
+1) Cấu hình (User Secrets / appsettings):
+     ZaloPay:AppId, Key1, Key2,
+     ZaloPay:CreateEndpoint = https://sb-openapi.zalopay.vn/v2/create
+     ZaloPay:QueryEndpoint  = https://sb-openapi.zalopay.vn/v2/query
+     ZaloPay:CallbackPath   = /api/payment/zalopay/callback  (POST, public HTTPS)
+
+2) Tạo đơn:
+     - Sinh app_time (Unix ms).
+     - Sinh app_trans_id = yyMMdd + "_" + uniqueId.
+     - Serialize embed_data, item bằng JSON cố định.
+     - mac = HMACSHA256(key1, hmac_input).
+     - POST form tới CreateEndpoint.
+     - Nếu return_code == 1 → trả order_url cho frontend / redirect.
+
+3) Callback controller:
+     - [HttpPost] đọc JSON body.
+     - Lấy `data` string nguyên bản; mac = HMACSHA256(key2, data).
+     - Parse JSON trong data; cập nhật đơn theo app_trans_id + amount; idempotent.
+     - Trả `{ "return_code": 1, "return_message": "success" }`.
+
+4) Thư viện hỗ trợ chính thức (sample ZaloPay .NET trong doc):
+     Tải **ZaloPay.Helper** (HmacHelper, HttpHelper, …) từ mục DOWNLOADS trên cổng
+     developer ZaloPay để khớp 100% với ví dụ.
+
+5) Newtonsoft.Json hoặc System.Text.Json — giữ thứ tự/thuộc tính JSON embed_data
+   nhất quán giữa lúc ký và lúc gửi.
+
+
+================================================================================
+12. KHỚP VỚI PROJECT BOOKSTORE (PYTHON) & FILE .env
+================================================================================
+
+File: app/routes/payment.py — hàm `create_zalopay_payment`:
+
+  - app_trans_id = f"{yyMMdd}_{order_code}"
+  - embed_data = json.dumps({"redirecturl": f"{APP_URL}/payment/callback/zalopay"})
+  - items = json.dumps([])
+  - data (mac) = f"{ZALOPAY_APP_ID}|{app_trans_id}|{app_user}|{amount}|{app_time}|{embed_data}|{items}"
+  - mac = HMAC-SHA256(key1, data).hexdigest()
+  - POST ZALOPAY_ENDPOINT với fields: app_id, app_user, app_time, amount,
+    app_trans_id, embed_data, item, description, bank_code="", mac
+
+Callback GET hiện có: `/payment/callback/zalopay` — đọc `status`, `apptransid` /
+`app_trans_id`; nếu status=='1' thì tách order_code từ app_trans_id.
+
+.env (dòng 26–30):
+
+  ZALOPAY_APP_ID, ZALOPAY_KEY1, ZALOPAY_KEY2, ZALOPAY_ENDPOINT như hình / file .env.
+
+
+================================================================================
+13. LINK TÀI LIỆU & MÃ MẪU
+================================================================================
+
+  Danh sách API & đặc tả create / callback / query (tiếng Việt):
+    https://developers.zalopay.vn/v2/general/overview.html
+
+  Credential sandbox app 2554 (GitHub chính thức):
+    https://github.com/zalopay-samples/test-apps/blob/main/credentials/app-2554.env
+
+  Repo mẫu:
+    https://github.com/zalopay-samples
+
+  SDK / docs tiếng Anh (beta-docs):
+    https://docs.zalopay.vn/
+
+  Bảo mật truyền dữ liệu (MAC):
+    https://beta-docs.zalopay.vn/docs/developer-tools/security/secure-data-transmission/
+
+
+================================================================================
+GHI CHÚ CUỐI
+================================================================================
+
+- Luôn đối chiếu bản doc mới nhất trên developers.zalopay.vn khi go-live.
+- Không commit key1/key2 lên Git; production dùng secret store.
+- return_code của API **create** (1 = OK) khác ý nghĩa một số cổng khác — ghi nhớ
+  khi port sang C#.
+
+================================================================================
+HẾT FILE
+================================================================================

@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+
+<html lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Thông báo - Preschool Portal</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary": "#ffffff",
+                        "surface-container-highest": "#dce2f7",
+                        "on-secondary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-container": "#5c2400",
+                        "tertiary-fixed": "#dde1ff",
+                        "surface-dim": "#d3daef",
+                        "tertiary-fixed-dim": "#b8c4ff",
+                        "inverse-on-surface": "#edf0ff",
+                        "on-tertiary-fixed": "#001453",
+                        "surface-tint": "#345baf",
+                        "on-tertiary": "#ffffff",
+                        "on-surface-variant": "#434652",
+                        "on-primary-container": "#8dadff",
+                        "surface": "#f9f9ff",
+                        "tertiary-container": "#0f36a6",
+                        "on-primary-fixed": "#001947",
+                        "primary-fixed": "#dae2ff",
+                        "on-error": "#ffffff",
+                        "on-tertiary-container": "#97abff",
+                        "tertiary": "#00227a",
+                        "inverse-surface": "#293040",
+                        "secondary-container": "#fd761a",
+                        "on-background": "#141b2b",
+                        "on-secondary-fixed-variant": "#783200",
+                        "secondary-fixed-dim": "#ffb690",
+                        "secondary-fixed": "#ffdbca",
+                        "outline": "#747783",
+                        "surface-variant": "#dce2f7",
+                        "on-surface": "#141b2b",
+                        "on-secondary-fixed": "#341100",
+                        "surface-container-high": "#e1e8fd",
+                        "inverse-primary": "#b1c5ff",
+                        "background": "#f9f9ff",
+                        "surface-container-low": "#f1f3ff",
+                        "surface-bright": "#f9f9ff",
+                        "primary-container": "#0b3d91",
+                        "on-error-container": "#93000a",
+                        "outline-variant": "#c4c6d3",
+                        "surface-container": "#e9edff",
+                        "primary": "#002869",
+                        "on-tertiary-fixed-variant": "#173bab",
+                        "primary-fixed-dim": "#b1c5ff",
+                        "on-primary-fixed-variant": "#144296",
+                        "secondary": "#9d4300",
+                        "error": "#ba1a1a",
+                        "error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sm": "8px",
+                        "xs": "4px",
+                        "sidebar-width": "260px",
+                        "base": "4px",
+                        "container-max": "1440px",
+                        "lg": "24px",
+                        "gutter": "20px",
+                        "xl": "32px",
+                        "md": "16px"
+                    },
+                    "fontFamily": {
+                        "h1": ["Inter"],
+                        "h3": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "h2": ["Inter"]
+                    },
+                    "fontSize": {
+                        "h1": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "h3": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
+                        "h2": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md">
+<!-- TopNavBar -->
+<header class="flex justify-between items-center px-6 h-16 w-full fixed top-0 z-50 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-none font-['Inter'] antialiased">
+<div class="text-xl font-bold text-blue-900 dark:text-white">Preschool Portal</div>
+<div class="flex items-center space-gap gap-4">
+<button class="material-symbols-outlined text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors p-2 rounded-full active:scale-95 transition-transform">notifications</button>
+<div class="flex items-center gap-3 pl-4 border-l border-slate-200">
+<span class="text-label-md font-bold text-blue-900 hidden md:block">Nguyễn Văn A</span>
+<button class="material-symbols-outlined text-blue-900 dark:text-blue-400 p-1 active:scale-95 transition-transform">account_circle</button>
+</div>
+</div>
+</header>
+<!-- SideNavBar (Desktop) -->
+<aside class="hidden lg:flex flex-col fixed left-0 top-0 h-full w-64 pt-20 pb-6 z-40 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 font-['Inter'] text-sm font-medium">
+<div class="px-6 mb-8">
+<div class="text-lg font-black text-blue-900 dark:text-white">Mầm Non Portal</div>
+<div class="text-xs text-slate-500 uppercase tracking-wider">Phụ huynh</div>
+</div>
+<nav class="flex-1 space-y-1 px-3">
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200 ease-in-out rounded-lg" href="#">
+<span class="material-symbols-outlined">home</span>
+                Trang chủ
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200 ease-in-out rounded-lg" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+                Điểm danh
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 bg-blue-50 dark:bg-blue-900/20 text-blue-900 dark:text-blue-300 border-r-4 border-blue-900 dark:border-blue-400 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">campaign</span>
+                Thông báo
+            </a>
+</nav>
+<div class="px-3 pt-6 border-t border-slate-100 dark:border-slate-800 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200 ease-in-out rounded-lg" href="#">
+<span class="material-symbols-outlined">settings</span>
+                Cài đặt
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200 ease-in-out rounded-lg" href="#">
+<span class="material-symbols-outlined">logout</span>
+                Đăng xuất
+            </a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="lg:ml-64 pt-16 pb-24 lg:pb-8 min-h-screen">
+<div class="max-w-4xl mx-auto px-gutter py-xl">
+<!-- Page Header & Filter Section -->
+<div class="mb-xl flex flex-col md:flex-row md:items-end justify-between gap-md">
+<div>
+<h1 class="font-h1 text-h1 text-primary mb-xs">Thông báo</h1>
+<p class="text-on-surface-variant font-body-md">Cập nhật tin tức mới nhất từ nhà trường và lớp học.</p>
+</div>
+<div class="flex items-center gap-sm bg-surface-container-low p-xs rounded-xl border border-outline-variant">
+<button class="px-md py-sm bg-white shadow-sm rounded-lg text-label-md text-primary font-semibold">Tất cả</button>
+<button class="px-md py-sm text-label-md text-on-surface-variant hover:bg-surface-variant rounded-lg transition-colors">Trường học</button>
+<button class="px-md py-sm text-label-md text-on-surface-variant hover:bg-surface-variant rounded-lg transition-colors">Lớp học</button>
+</div>
+</div>
+<!-- Announcements List -->
+<div class="space-y-md">
+<!-- Unread Announcement Item -->
+<div class="relative group cursor-pointer bg-white rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.04)] border-l-4 border-secondary transition-all hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)]">
+<div class="p-lg">
+<div class="flex justify-between items-start mb-sm">
+<span class="inline-flex items-center px-sm py-xs rounded-full text-label-sm bg-orange-100 text-secondary border border-orange-200">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary mr-2"></span>
+                                Thông báo trường
+                            </span>
+<span class="text-label-sm text-on-surface-variant flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+                                2 giờ trước
+                            </span>
+</div>
+<h2 class="font-h2 text-h2 text-on-surface mb-sm group-hover:text-primary transition-colors">Thông báo nghỉ lễ Giỗ Tổ Hùng Vương 2024</h2>
+<p class="text-on-surface-variant line-clamp-2 font-body-md mb-md">Kính gửi Quý phụ huynh, nhà trường xin thông báo lịch nghỉ lễ Giỗ Tổ Hùng Vương chính thức bắt đầu từ ngày 18/04 đến hết ngày 19/04...</p>
+<div class="flex items-center justify-between">
+<div class="flex -space-x-2">
+<div class="w-8 h-8 rounded-full border-2 border-white bg-surface-container-highest flex items-center justify-center overflow-hidden">
+<img alt="School Icon" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSJUTCqJEt2zhf-PlUMO1WL9JVOIjHVmACSCGVnBTIMbF5grIhfWzm3T8jJhyjP4Lj6vVNYwZt8noxB0zwbKj0Hp5Rmq_Q-ju3CSY4uVKVTDnTXiiWW8oZJ5v1NhPO14y-61BLXHP5bvMhuJ_oKPbxHFi1rRoD8rv-p9pMg_bRLGYOxqbkeBjRCT5HLAje1Ae659CKzq11OkAfYuDgCoTGBzW_eyaV4537JroGci77KVEO5LWXqfeWItO16cIEq37cLea2_tUOeTOz"/>
+</div>
+<div class="px-3 h-8 flex items-center bg-surface-container text-label-sm text-primary font-bold rounded-full border-2 border-white">
+                                    Admin
+                                </div>
+</div>
+<button class="text-primary font-label-md flex items-center gap-xs group-hover:translate-x-1 transition-transform">
+                                Xem chi tiết
+                                <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Unread Badge Dot -->
+<div class="absolute -top-1 -right-1 w-3 h-3 bg-secondary rounded-full border-2 border-white shadow-sm"></div>
+</div>
+<!-- Read Announcement Item -->
+<div class="group cursor-pointer bg-white rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.04)] border-l-4 border-outline-variant transition-all hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)]">
+<div class="p-lg">
+<div class="flex justify-between items-start mb-sm opacity-60">
+<span class="inline-flex items-center px-sm py-xs rounded-full text-label-sm bg-surface-container text-on-surface-variant border border-outline-variant">
+                                Thông báo lớp
+                            </span>
+<span class="text-label-sm text-on-surface-variant flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">calendar_today</span>
+                                12/04/2024
+                            </span>
+</div>
+<h2 class="font-h2 text-h2 text-on-surface mb-sm opacity-80">Hoạt động dã ngoại thực tế tại Bảo tàng Lịch sử</h2>
+<p class="text-on-surface-variant line-clamp-2 font-body-md mb-md">Lớp Lá 1 sẽ có buổi tham quan thực tế vào thứ Sáu tuần này. Quý phụ huynh vui lòng chuẩn bị đồ dùng cá nhân và trang phục đồng phục...</p>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-full border border-outline-variant bg-surface-container-low flex items-center justify-center overflow-hidden">
+<img alt="Teacher" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBROVG5dyv2to0n9RrY0BMt2I2XTb5DUxnOAi4d1Yn8-7c-2ctvUeVo0xKCqisGMNJQENyEUby85imZaGx2UhaGnjn-WKyhzJZHtlM8HUFTrgg_qXign_hSBUIzMZjbP6dtKFicJzcepS_8h1_JffLw3Pd6K3JnRyjVpLEAx9ZLfujhgiA7CzSFlMmy0Fu_rHdW8JKtGl8xttkV1QZ9394cd29dlbBmeVrF1T4AiRv89wBmWjcNpyexiOodwr8JiH51iE6w47As9br4"/>
+</div>
+<span class="text-label-sm text-on-surface-variant">Cô Minh Thư - Lớp Lá 1</span>
+</div>
+<button class="text-on-surface-variant font-label-md flex items-center gap-xs">
+                                Đã xem
+                                <span class="material-symbols-outlined text-[18px]">done_all</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Featured Announcement with Image -->
+<div class="group cursor-pointer bg-white rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.04)] overflow-hidden transition-all hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)]">
+<div class="md:flex">
+<div class="md:w-1/3 relative h-48 md:h-auto">
+<img class="w-full h-full object-cover" data-alt="A bright and colorful preschool classroom setting with small wooden tables, educational posters on the walls, and sunlight streaming through large windows. The atmosphere is warm, professional, and inviting, with a palette dominated by soft blues and whites with vibrant educational accents. The lighting is bright and airy, representing a safe and high-quality educational environment for young children." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDm--4ZnX55arAQ6AwZszeCJ-83mMkhbxoNbeSmC3DmtR54gpI5b3EJj6wItYSfOBghFLOWrdlo0yMVEshMaSmpTH3ei9BaHf1Zlhd8vim1J9r909Rfw1CetGRz6xxO-fDBV86OTML5HHvRc_6pdC2OqtMAmoHyE9d90udD6UYbpGkXktulxGUfHWbMF93vOZMcaECFT_di_JrhITu9-M8k0vCTBGq2RXUed40kuLL0OaMc8LtMAEc25IZ3l-O2wNoKaP_BjOUalJ8A"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/40 to-transparent"></div>
+</div>
+<div class="md:w-2/3 p-lg">
+<div class="flex justify-between items-start mb-sm">
+<span class="inline-flex items-center px-sm py-xs rounded-full text-label-sm bg-blue-100 text-primary border border-blue-200">
+                                    Sự kiện sắp tới
+                                </span>
+<span class="text-label-sm text-on-surface-variant">10/04/2024</span>
+</div>
+<h2 class="font-h2 text-h2 text-on-surface mb-sm group-hover:text-primary transition-colors">Lễ hội Ngày hội Thể thao Family Day 2024</h2>
+<p class="text-on-surface-variant line-clamp-3 font-body-md mb-md">Nhằm thắt chặt tình cảm gia đình và rèn luyện thể chất cho các bé, nhà trường trân trọng kính mời quý phụ huynh tham gia ngày hội Family Day với nhiều trò chơi hấp dẫn...</p>
+<div class="flex items-center justify-between pt-md border-t border-slate-50">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-secondary">location_on</span>
+<span class="text-label-sm font-semibold">Sân vận động Quân khu 7</span>
+</div>
+<button class="bg-primary text-white px-md py-sm rounded-lg text-label-md font-bold active:scale-95 transition-all">Đăng ký ngay</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Empty State Placeholder (Logic Check) -->
+<div class="hidden flex-col items-center justify-center py-24 text-center bg-white/50 rounded-2xl border-2 border-dashed border-outline-variant">
+<span class="material-symbols-outlined text-[64px] text-slate-300 mb-md">inbox</span>
+<h3 class="font-h3 text-h3 text-on-surface">Không có thông báo mới</h3>
+<p class="text-on-surface-variant max-w-xs mx-auto">Tất cả thông báo đã được đọc. Chúng tôi sẽ cập nhật khi có tin tức mới.</p>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile) -->
+<nav class="lg:hidden fixed bottom-0 left-0 w-full h-16 flex justify-around items-center px-4 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] font-['Inter'] text-[10px] font-semibold rounded-t-2xl">
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">home</span>
+            Trang chủ
+        </a>
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+            Điểm danh
+        </a>
+<a class="flex flex-col items-center justify-center text-blue-900 dark:text-blue-300 active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">campaign</span>
+            Thông báo
+        </a>
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">account_circle</span>
+            Hồ sơ
+        </a>
+</nav>
+<!-- Contextual FAB (Hidden on this view per guidelines, but kept as placeholder for logic if needed) -->
+<!-- Suppression applied as this is a list/details page -->
+</body></html>

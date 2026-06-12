@@ -1,0 +1,48 @@
+================================================================================
+  QUANG TRUNG MN — TÀI KHOẢN DEMO (seed tự động khi chạy API + DB)
+================================================================================
+
+Mật khẩu CHUNG cho tất cả tài khoản dưới đây:
+
+  Mật khẩu: Demo@123
+
+(Lưu ý: mật khẩu có chữ hoa D, ký tự @, số 123 — đúng theo cấu hình Identity trong project.)
+
+--------------------------------------------------------------------------------
+  EMAIL ĐĂNG NHẬP                    | VAI TRÒ (role)
+--------------------------------------------------------------------------------
+  superadmin@demo.local              | SuperAdmin
+  bangiamhieu@demo.local             | BanGiamHieu
+  giaovien@demo.local                | GiaoVien
+  ketoan@demo.local                  | KeToan
+  phuhuynh@demo.local                | PhuHuynh
+--------------------------------------------------------------------------------
+
+Đăng ký phụ huynh mới: dùng trang /register-parent (email + mật khẩu do bạn đặt,
+phải đủ độ mạnh theo server — tối thiểu 6 ký tự, có chữ HOA, số và ký tự đặc biệt).
+
+Mã liên kết học sinh demo (khi đăng ký, ô "Mã số học sinh" — tùy chọn):
+
+  QT-2025-001
+
+================================================================================
+  Gợi ý chạy nhanh
+================================================================================
+  - API:  cd backend\QuangTrung.Api  rồi  dotnet run
+  - Web:  cd frontend  rồi  npm run dev  → mở http://localhost:5173/login
+
+  DevTools Console (F12): gõ
+    await window.__QT_RUN_AUTH_API_TESTS__()
+  để chạy self-test login/register qua đúng URL/proxy hiện tại; xem log [QT API] / PASS-FAIL.
+
+================================================================================
+  Nếu đăng nhập báo 500 / Internal Server Error
+================================================================================
+  - appsettings.Development.json: UseInMemoryDatabase = false → dùng PostgreSQL (mặc định).
+  - Chuỗi kết nối và mật khẩu: xem appsettings.json (mặc định Password=123456 cho user postgres).
+  - Tạo DB + migration chi tiết: đọc file TAO_DB_POSTGRES.txt hoặc chạy scripts\tao-db-postgresql.ps1 (cần psql trong PATH).
+  - Nếu vẫn lỗi: F12 → Network → login → Response; xem console cửa sổ chạy dotnet run.
+  - Vite có thể dùng cổng 5174 nếu 5173 bận — đã bật CORS cho cả hai.
+  - Proxy FE phải trùng cổng API (mặc định http://127.0.0.1:5022 trong vite.config.ts).
+
+================================================================================

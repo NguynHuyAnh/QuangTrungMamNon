@@ -1,0 +1,289 @@
+================================================================================
+PROMPT THIẾT KẾ UI (STITCH / AI DESIGN) — HỆ THỐNG QUẢN LÝ TRƯỜNG MẦM NON
+Dự án: Quang Trung MN — Admin + Phụ huynh (SPA gọi REST API đã có sẵn)
+Ngôn ngữ giao diện: Tiếng Việt
+================================================================================
+
+MỤC ĐÍCH FILE NÀY
+-----------------
+Bạn là công cụ thiết kế UI (Stitch / tương đương). Hãy sinh giao diện web đáp ứng:
+  • Bố cục: sidebar trái cố định + vùng nội dung chính + top bar (tham chiếu phong cách dashboard admin dạng “DaNang Travel” — sidebar menu nhóm, card thống kê, thao tác nhanh, bảng dữ liệu), nhưng **tinh chỉnh đẹp hơn**: spacing đồng nhất, typography rõ cấp bậc, card bo góc mềm, shadow nhẹ, trạng thái hover/focus/accessibility đầy đủ.
+  • Màu chủ đạo (đăng nhập / đăng ký / nhấn mạnh CTA): **trắng — xanh đậm (brand) — cam (accent)** như moodboard “tech / professional” (ảnh 2): nền trắng hoặc xám rất nhạt; nút primary xanh đậm; liên kết / badge / số liệu nổi bật dùng cam; text chính than chì/đen đọc tốt.
+  • Toàn bộ màn hình phải **khớp luồng nghiệp vụ và endpoint API** liệt kê bên dưới (không bịa thêm module ngoài danh sách).
+
+BASE API (SPA)
+--------------
+Giả sử biến môi trường VITE_API_BASE_URL = https://localhost:7xxx (dev). Mọi request JSON: Content-Type application/json; sau đăng nhập: header Authorization: Bearer <accessToken> từ POST /api/auth/login.
+
+TÓM TẮT — CÓ PHẢI CHỈ SUPER ADMIN VÀ PHỤ HUYNH?
+-----------------------------------------------
+**Không.** Có **5 role** (SuperAdmin, BanGiamHieu, GiaoVien, KeToan, PhuHuynh), nhưng chỉ cần thiết kế **2 khung giao diện (shell)**:
+
+  (1) **Shell “Nội bộ / Admin”** — sidebar + topbar + nội dung (C4–C16): **dùng chung** cho SuperAdmin, Ban Giám Hiệu, Giáo viên và Kế toán. **Cùng các route/màn hình**, frontend đọc role trong JWT để **ẩn mục menu** và **ẩn hoặc disable nút** (Thêm / Sửa / Xóa / Publish / Tạo thanh toán / ZaloPay…) nếu không đủ quyền; nếu user cố gọi API vẫn nhận 403. SuperAdmin **không phải app riêng**: là biến thể của shell admin **nhìn thấy gần như đầy đủ menu và thao tác**.
+
+  (2) **Shell “Phụ huynh”** — gọn, ít mục (C17–C19): dashboard con, điểm danh con, thông báo đã publish; **không** dùng sidebar đầy module nội bộ như admin.
+
+Màn **đăng nhập / đăng ký phụ huynh** là màn **chung** (không phân shell), màu trắng–xanh–cam như design system.
+
+PHÂN QUYỀN (ROLE) — ẨN / HIỆN MENU THEO JWT
+---------------------------------------------
+Sau login, JWT chứa danh sách role. Các role hệ thống:
+  • SuperAdmin — toàn quyền cấu hình + nhân sự + dữ liệu
+  • BanGiamHieu (BGH) — quản trị dữ liệu trường, duyệt/thông báo, liên kết PH–HS, nhiều màn giống SuperAdmin trừ vài thao tác siêu quản trị
+  • GiaoVien — lớp chủ nhiệm, điểm danh, học sinh trong phạm vi lớp, thông báo nháp
+  • KeToan — biểu phí, gán phí, thanh toán, ZaloPay, xem học sinh (billing-view), công nợ
+  • PhuHuynh — xem con đã liên kết, điểm danh con, thông báo đã publish, có thể đăng ký tài khoản công khai
+
+LƯU Ý QUAN TRỌNG — MÀN HÌNH THEO ROLE (CÙNG ROUTE SPA, KHÁC MENU / NÚT)
+------------------------------------------------------------------------------
+Backend không tách “app” riêng; **cùng các route C4–C16** (trừ C3, C9 chỉ một số role), Stitch thiết kế **một shell admin** rồi **ẩn hoặc vô hiệu hóa** mục menu + nút CRUD theo JWT (403 nếu gọi nhầm). Bảng dưới là chuẩn cần có trong UI:
+
+  Màn (route gợi ý)                    | SuperAdmin | BanGiamHieu | GiaoVien      | KeToan
+  ------------------------------------|------------|-------------|---------------|--------
+  C4 Dashboard                        | Có         | Có          | Có (KPI phù hợp: ưu tiên lớp/điểm danh) | Có (KPI thu/chờ phí)
+  C3 Đăng ký nhân sự                  | Có         | Có          | Không         | Không
+  C5 Năm học — xem                    | Có         | Có          | Có            | Có
+  C5 Năm học — thêm/sửa/xóa           | Có         | Có          | Không         | Không
+  C6 Khối — xem                       | Có         | Có          | Có            | Có
+  C6 Khối — thêm/sửa/xóa              | Có         | Có          | Không         | Không
+  C7 Lớp — xem                        | Có         | Có          | Có (chỉ lớp chủ nhiệm do API lọc) | Có
+  C7 Lớp — thêm/sửa/xóa               | Có         | Có          | Không         | Không
+  C8 Học sinh — xem                   | Có         | Có          | Có (phạm vi lớp GV) | Có (billing-view riêng C14)
+  C8 Học sinh — thêm/sửa/xóa/gán lớp  | Có         | Có          | Không         | Không
+  C9 Liên kết PH–HS                   | Có         | Có          | Không         | Không
+  C10 Điểm danh — xem                 | Có         | Có          | Có            | Không (trừ nếu policy mở — mặc định ẩn)
+  C10 Điểm danh — ghi/sửa/bulk       | Có         | Có          | Có            | Không
+  C11 Thông báo — xem                 | Có         | Có          | Có            | Có
+  C11 Tạo draft                       | Có         | Có          | Có            | Không (trừ mở policy — mặc định KeToan không soạn)
+  C11 Publish                         | Có         | Có          | Không         | Không
+  C12–C13 Biểu phí / Gán phí — xem        | Có         | Có          | Không         | Có
+  C12–C13 Biểu phí / Gán phí — CRUD ghi   | Có         | Không       | Không         | Có (+ SuperAdmin theo API)
+  C14 Thanh toán / summary — xem        | Có         | Có          | Không         | Có
+  C14 Thanh toán — tạo phiếu (POST)     | Có         | Không       | Không         | Có (+ SuperAdmin)
+  C15 Công nợ                         | Có         | Có          | Không         | Có
+  C16 ZaloPay                         | Có         | Không (mặc định) | Không   | Có (+ SuperAdmin)
+
+Gợi ý UX cho **Giáo viên**: sidebar gọn — “Lớp của tôi”, “Học sinh”, “Điểm danh”, “Thông báo (nháp)”, “Dashboard”; ẩn hoàn toàn nhóm Thu phí / ZaloPay / Danh mục ghi.
+
+Gợi ý UX cho **Kế toán**: “Dashboard (thu)”, “Học sinh (kế toán)”, “Biểu phí”, “Gán phí”, “Thanh toán”, “Công nợ”, “ZaloPay”; ẩn tạo nhân sự, liên kết PH, CRUD năm học/khối/lớp/học sinh đầy đủ (chỉ giữ billing-view + thu).
+
+Gợi ý UX cho **Ban giám hiệu**: gần full như SuperAdmin trên danh mục & học sinh & thông báo publish; **không** có C16 ZaloPay trừ khi bạn chủ động mở policy — mặc định prompt này ẩn ZaloPay cho BGH.
+
+--------------------------------------------------------------------------------
+PHẦN A — HỆ THỐNG THIẾT KẾ (DESIGN SYSTEM)
+--------------------------------------------------------------------------------
+
+A1. Palette (gợi ý mã — có thể tinh chỉnh nhưng giữ tinh thần trắng / xanh / cam)
+    • Nền chính: #FFFFFF
+    • Nền phụ (content area / card nền): #F6F8FB hoặc #F4F6F9
+    • Brand xanh đậm (sidebar hoặc primary button): #0B3D91 ~ #1E40AF (chọn một và dùng nhất quán)
+    • Accent cam (số KPI, CTA phụ, badge cảnh báo, “Thanh toán / ZaloPay”): #F97316 ~ #EA580C
+    • Text chính: #111827 / #0F172A; text phụ: #64748B
+    • Viền nhẹ: #E2E8F0; shadow card: rất nhẹ (0 8px 24px rgba đen ~6%)
+
+A2. Typography
+    • Font sans hiện đại (Inter / Noto Sans / system-ui).
+    • Tiêu đề trang: 24–28px semibold; tiêu đề section: 18–20px; body 14–16px.
+
+A3. Thành phần layout admin (sau đăng nhập)
+    • **Sidebar trái** (rộng ~260px, có thể thu gọn icon-only): nền xanh đậm, chữ/icon trắng; mục active: nền nhạt hơn hoặc viền trái cam + chữ trắng đậm.
+    • **Top bar** trắng: breadcrumb hoặc tiêu đề trang, ô tìm kiếm nhanh (tuỳ màn), chuông thông báo (UI), avatar + tên + role + menu đăng xuất.
+    • **Content**: max-width hợp lý, card + bảng + form dạng 1 cột hoặc 2 cột responsive.
+
+A4. Form & bảng
+    • Input bo góc 8–12px, trạng thái lỗi đỏ nhẹ + message dưới field.
+    • Bảng: header nền xám nhạt; hàng xen kẽ nhẹ; cột “Thao tác” với icon Sửa/Xóa hoặc nút nhỏ.
+    • Phân trang UI: page, pageSize; hiển thị totalCount từ API PagedResult.
+
+A5. Auth (login / register)
+    • Nền: trắng / gradient rất nhạt xám–xanh; **card đăng nhập** trắng giữa màn hình, shadow nhẹ.
+    • Nút “Đăng nhập”: nền xanh đậm, chữ trắng.
+    • Link “Đăng ký phụ huynh”, “Quên mật khẩu” (nếu có): màu cam hoặc xanh tùy hierarchy.
+    • Không dùng màu loạn; giữ contrast WCAG hợp lý.
+
+--------------------------------------------------------------------------------
+PHẦN B — LUỒNG NGƯỜI DÙNG (WORKFLOW TỔNG)
+--------------------------------------------------------------------------------
+
+B1. Khách / Phụ huynh chưa có tài khoản
+    • Màn “Đăng ký phụ huynh” → POST /api/auth/register-parent → có thể nhận token (theo API) hoặc chuyển sang đăng nhập.
+
+B2. Đăng nhập (mọi role)
+    • POST /api/auth/login { email, password } → lưu accessToken + thông tin user/roles → điều hướng dashboard theo role.
+
+B3. BGH / SuperAdmin tạo tài khoản nhân sự
+    • Màn “Tạo tài khoản nhân sự” (chỉ role được phép) → POST /api/auth/register-staff (Bearer).
+
+B4. Vận hành năm học
+    • CRUD năm học, khối, lớp → filter theo năm/khối/tìm kiếm q.
+
+B5. Học sinh
+    • BGH/SuperAdmin: CRUD học sinh, gán lớp theo năm.
+    • Giao viên: xem/sửa trong phạm vi lớp chủ nhiệm (API đã lọc).
+    • Phụ huynh: xem danh sách con GET /api/students/me/children (sau khi BGH liên kết).
+
+B6. Liên kết phụ huynh – học sinh
+    • BGH: POST/DELETE /api/parent-links.
+
+B7. Điểm danh
+    • GV/BGH: nhập / sửa / bulk theo lớp ngày.
+    • PH: chỉ xem bản ghi của con.
+
+B8. Thông báo
+    • GV/BGH: tạo draft → BGH publish (PUT …/publish).
+
+B9. Thu phí
+    • CRUD biểu phí, CRUD gán phí học sinh.
+    • Ghi nhận thanh toán tiền mặt/chuyển khoản + tổng hợp.
+    • ZaloPay: tạo đơn → mở order_url / QR → callback server tạo Payment (frontend chỉ hiển thị trạng thái + tra cứu query).
+
+--------------------------------------------------------------------------------
+PHẦN C — MÔ TẢ TỪNG MÀN HÌNH (CHI TIẾT CHO STITCH)
+--------------------------------------------------------------------------------
+
+C0. MÀN CHÀO / LANDING (tuỳ chọn marketing)
+    • Hero: tên hệ thống “Quản lý Trường Mầm Non”, nút “Đăng nhập” (xanh), “Đăng ký phụ huynh” (viền xanh hoặc cam).
+    • Footer: bản quyền, hotline (placeholder).
+
+--- AUTH ---
+
+C1. MÀN ĐĂNG NHẬP (/login)
+    • Trường: email, password, checkbox “Ghi nhớ” (localStorage — UI only nếu không có API).
+    • Nút: Đăng nhập (primary xanh).
+    • Link dưới form: “Đăng ký tài khoản phụ huynh” → /register-parent (cam hoặc xanh nhạt).
+    • Gọi API: POST /api/auth/login. Lỗi: hiển thị Unauthorized message thân thiện.
+    • Sau thành công: lưu token, route /dashboard hoặc /app.
+
+C2. MÀN ĐĂNG KÝ PHỤ HUYNH (/register-parent) — public
+    • Trường: email, password, fullName, optional studentIdToLink (UUID — nếu trường đã cấp mã học sinh).
+    • Nút: Đăng ký (xanh); link “Đã có tài khoản? Đăng nhập” (cam).
+    • API: POST /api/auth/register-parent.
+    • Ghi chú UX: giải thích “Liên kết con sẽ do ban giám hiệu xác nhận nếu không nhập mã”.
+
+C3. MÀN TẠO TÀ KHOẢN NHÂN SỰ (/admin/users/register-staff) — BGH + SuperAdmin
+    • Trường: email, password, fullName, role (dropdown: GiaoVien, KeToan, … theo AppRoles trừ PhuHuynh nếu không muốn).
+    • API: POST /api/auth/register-staff (Bearer).
+    • Thông báo thành công + copy email cho admin.
+
+--- LAYOUT ADMIN CHUNG (sau login, role ≠ PhuHuynh hoặc tùy cấu hình) ---
+
+C4. DASHBOARD TỔNG QUAN (/dashboard)
+    • Mục tiêu: giống “ảnh 1” nhưng nội dung trường mầm non.
+    • Hàng **4 thẻ KPI** (số lớn màu cam, nhãn xám), dữ liệu lấy từ các API read (tổng hợp phía client nếu chưa có API dashboard riêng):
+        - Tổng học sinh đang học: đếm từ GET /api/students?status=DangHoc&pageSize=1 (dùng totalCount) hoặc page lớn.
+        - Số lớp hiện tại: GET /api/classes?schoolYearId=<năm hiện tại>&pageSize=1 → totalCount.
+        - Tổng thu (tháng): GET /api/payments/summary (hoặc lọc from/to) — role KeToan/BGH.
+        - Thông báo đã gửi / nháp: GET /api/announcements?status=… — tuỳ quyền.
+    • Hàng **Thao tác nhanh** (3–4 nút lớn bo góc, icon):
+        - “Thêm học sinh” → /students/new (BGH)
+        - “Điểm danh hôm nay” → /attendance (GV/BGH)
+        - “Tạo thông báo nháp” → /announcements/new
+        - “Ghi nhận thanh toán” → /payments/new (KeToan)
+    • Hàng dưới: 2 khung placeholder biểu đồ (line chart “Học sinh theo tháng” — mock data hoặc để trống state “Sắp có”; pie “Học sinh theo khối” — mock).
+
+--- MENU CHÍNH (sidebar) — map route SPA ---
+
+Nhóm “Danh mục & lớp” (Catalog + Classes) — role: đọc: BGH, GV, KeToan, SuperAdmin; ghi: BGH, SuperAdmin
+C5. NĂM HỌC (/school-years)
+    • Bảng + phân trang; ô tìm q; filter “Chỉ năm hiện tại”.
+    • API: GET /api/school-years?q=&isCurrent=&page=&pageSize=; GET /api/school-years/{id}; POST; PUT; DELETE.
+    • Form tạo/sửa: name, startDate, endDate, isCurrent (checkbox).
+
+C6. KHỐI (/grades)
+    • Tương tự: GET /api/grades?q=&page=&pageSize=; CRUD đầy đủ.
+
+C7. LỚP (/classes)
+    • Filter: schoolYearId, gradeId, q; bảng + CRUD; xóa = soft delete.
+    • API: GET /api/classes…; GET /api/classes/{id}; POST; PUT; DELETE.
+    • Form: tên lớp, năm học, khối, sĩ số tối đa, giáo viên chủ nhiệm (dropdown user role GiaoVien).
+
+--- Học sinh & liên kết ---
+
+C8. HỌC SINH (/students) — nội bộ
+    • Filter: q, status, classId, schoolYearId; phân trang.
+    • API: GET /api/students; GET /api/students/{id}; POST; PUT; DELETE (soft).
+    • Form học sinh: họ tên, giới tính, ngày sinh, địa chỉ, ghi chú sức khỏe/dị ứng, trạng thái.
+    • Nút “Gán vào lớp (năm học)” → modal: chọn lớp, năm học, ngày bắt đầu (fromDate) → POST /api/students/{id}/class-assignments body { classId, schoolYearId, fromDate }.
+
+C9. LIÊN KẾT PHỤ HUYNH (/parent-links) — BGH + SuperAdmin
+    • Form tạo: userId (UUID phụ huynh), studentId, relationship (chuỗi), isPrimary (checkbox).
+    • API: POST /api/parent-links body { userId, studentId, relationship, isPrimary }.
+    • Gỡ liên kết: DELETE /api/parent-links?userId=&studentId= (query).
+
+--- Điểm danh ---
+
+C10. ĐIỂM DANH (/attendance)
+    • Filter: from, to (date), classId, studentId; bảng phân trang.
+    • API: GET /api/attendance/records?from=&to=&classId=&studentId=&page=&pageSize=
+    • Thêm / sửa bản ghi: POST /api/attendance/records; PUT /api/attendance/records/{id}
+    • Bulk: POST /api/attendance/records/bulk (UI: chọn nhiều học sinh + trạng thái + ngày + lớp).
+    • Role PH: chỉ đọc filter mặc định theo con (API đã giới hạn).
+
+--- Thông báo ---
+
+C11. THÔNG BÁO (/announcements)
+    • Danh sách: q, status, phân trang; badge phạm vi (toàn trường / theo lớp).
+    • API: GET /api/announcements; POST /api/announcements/draft; PUT /api/announcements/{id}/publish (BGH/SuperAdmin).
+    • Form draft: tiêu đề, nội dung, phạm vi, classId nếu theo lớp.
+    • PH: chỉ thấy published trong phạm vi (API đã xử lý).
+
+--- Thu phí & thanh toán ---
+
+C12. BIỂU PHÍ (/fee-structures)
+    • CRUD + lọc schoolYearId; API như FeeStructuresController.
+
+C13. GÁN PHÍ HỌC SINH (/student-fee-assignments)
+    • CRUD + filter studentId, month, schoolYearId.
+
+C14. THANH TOÁN (/payments)
+    • Danh sách: filter studentId, from, to; phân trang.
+    • API: GET /api/payments; POST /api/payments (tiền mặt/chuyển khoản).
+    • Trang tổng: GET /api/payments/summary.
+    • Màn “Danh sách học sinh (kế toán)”: GET /api/students/billing-view?q=&page=&pageSize=
+
+C15. CÔNG NỢ (/billing)
+    • Form: chọn học sinh, schoolYearId, tháng → hiển thị expected, paid, balance.
+    • API: GET /api/billing/students/{studentId}/balance?schoolYearId=&month=
+
+C16. ZALOPAY SANDBOX (/payments/zalopay)
+    • (KeToan / SuperAdmin) Form: studentId, amountVnd (số nguyên), mô tả.
+    • API: POST /api/payments/zalopay/create → hiển thị orderUrl (nút “Mở cổng thanh toán”), qrCode nếu có (img QR).
+    • Trang return: GET /api/payments/zalopay/return (redirect từ ZaloPay — có thể mở tab).
+    • Tra cứu đơn: POST /api/payments/zalopay/query body { appTransId } — hiển thị JSON hoặc parse trạng thái.
+    • Ghi chú UX: “Trạng thái thanh toán chính thức cập nhật qua callback server; nút ‘Đồng bộ’ gọi query.”
+
+--- PHỤ HUYNH (layout có thể đơn giản hơn sidebar đầy đủ) ---
+
+C17. DASHBOARD PHỤ HUYNH (/parent)
+    • Card: danh sách con (GET /api/students/me/children).
+    • Shortcut: Điểm danh con, Thông báo, (tuỳ) học phí nếu sau này mở rộng.
+
+C18. ĐIỂM DANH CON — dùng lại C10 với filter mặc định studentId = con đã chọn.
+
+C19. THÔNG BÁO PHỤ HUYNH — dùng C11 (read-only publish).
+
+--------------------------------------------------------------------------------
+PHẦN D — YÊU CẦU KỸ THUẬT GIAO DIỆN (CHO STITCH)
+--------------------------------------------------------------------------------
+
+D1. Responsive: desktop ưu tiên; tablet thu sidebar; mobile drawer menu.
+D2. Trạng thái: loading skeleton bảng/card; empty state minh họa; error toast từ HTTP 4xx/5xx.
+D3. Không hiển thị token trên UI; lưu an toàn (memory + sessionStorage tùy chính sách).
+D4. Mọi danh sách có phân trang: bind page, pageSize, map response { items, totalCount, page, pageSize }.
+D5. Tìm kiếm q: debounce 300ms trước khi gọi API.
+D6. Icon line đơn giản (Heroicons / Lucide style) đồng bộ sidebar.
+D7. Chuẩn hóa nút: Primary = xanh đậm; Secondary = viền xanh; Destructive = đỏ nhạt; CTA tiền/ZaloPay = cam nổi bật.
+
+--------------------------------------------------------------------------------
+PHẦN E — CHECKLIST GIAO DELIVERABLE (STITCH OUTPUT)
+--------------------------------------------------------------------------------
+
+[ ] Full set màn hình: Login, Register parent, Dashboard admin, từng module C5–C16, layout PH C17–C19.
+[ ] Design system page: màu, type, button, input, table, card, badge.
+[ ] Sidebar + topbar component trạng thái active.
+[ ] Biến thể theo role (ẩn menu không đủ quyền).
+[ ] Trang lỗi 403 “Bạn không có quyền truy cập”.
+
+================================================================================
+HẾT PROMPT — CHỈNH SỬA BASE URL VÀ CHI TIẾT DTO KHI NỐI CODE THỰC TẾ
+================================================================================

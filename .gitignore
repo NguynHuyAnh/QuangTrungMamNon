@@ -1,0 +1,15 @@
+# Bí mật & biến môi trường cục bộ
+.env
+.env.local
+backend/QuangTrung.Api/.env
+frontend/.env.local
+
+# Xuất PostgreSQL (có thể chứa dữ liệu thật)
+database/exports/*.sql
+database/exports/*.dump
+!database/exports/.gitkeep
+
+# .NET build
+**/bin/
+**/obj/
+**/out/

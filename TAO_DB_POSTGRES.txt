@@ -1,0 +1,55 @@
+================================================================================
+  PostgreSQL tren may ban (da kiem tra)
+================================================================================
+  Tim thay: C:\Program Files\PostgreSQL\16\bin\psql.exe
+
+  Da chay CREATE DATABASE quangtrung_mn; va dotnet ef database update thanh cong
+  (cac migration: InitialCreate, AddZaloPayOrders, AddStudentRegistrationCode).
+
+  Lan sau chi can (tat API neu dang chay de tranh lock file khi build):
+    powershell -ExecutionPolicy Bypass -File scripts\tao-db-postgresql.ps1
+
+================================================================================
+
+Chuỗi kết nối mặc định trong appsettings.json:
+  Host=localhost;Port=5432;Database=quangtrung_mn;Username=postgres;Password=123456
+
+Bước 1 — PostgreSQL phải đang chạy (service trên Windows hoặc Docker).
+
+Bước 2 — Tạo database (một lần), mở PowerShell:
+
+  $env:PGPASSWORD = "123456"
+  psql -h localhost -p 5432 -U postgres -d postgres -c "CREATE DATABASE quangtrung_mn;"
+
+Nếu báo "already exists" thì bỏ qua, tiếp bước 3.
+
+(Nếu máy không có lệnh psql: mở pgAdmin → Query Tool → chạy:
+  CREATE DATABASE quangtrung_mn;
+)
+
+Bước 3 — Áp dụng bảng (migration), từ thư mục gốc repo:
+
+  dotnet ef database update --project backend\QuangTrung.Infrastructure --startup-project backend\QuangTrung.Api
+
+(Lệnh trên dùng cùng chuỗi kết nối với appsettings / ApplicationDbContextFactory — mặc định mật khẩu postgres là 123456.)
+
+Ghi đè tạm bằng biến môi trường (PowerShell):
+
+  $env:ConnectionStrings__DefaultConnection = "Host=localhost;Port=5432;Database=quangtrung_mn;Username=postgres;Password=MAT_KHAU_CUA_BAN"
+  dotnet ef database update --project backend\QuangTrung.Infrastructure --startup-project backend\QuangTrung.Api
+
+Bước 4 — Chạy API (sẽ seed tài khoản demo):
+
+  cd backend\QuangTrung.Api
+  dotnet run --launch-profile http
+
+Tài khoản demo: xem file TAI_KHOAN_DEMO.txt (mật khẩu Demo@123).
+
+================================================================================
+  Ghi chú
+================================================================================
+  - appsettings.Development.json: UseInMemoryDatabase = false → luôn dùng PostgreSQL.
+  - Nếu user/mật khẩu PostgreSQL khác, sửa ConnectionStrings trong appsettings.json
+    (hoặc User Secrets / biến môi trường) cho khớp máy bạn.
+
+================================================================================

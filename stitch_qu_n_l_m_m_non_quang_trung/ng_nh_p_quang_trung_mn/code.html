@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Đăng nhập - Quang Trung MN</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-dim": "#d3daef",
+                      "on-secondary-container": "#5c2400",
+                      "on-tertiary-fixed": "#001453",
+                      "on-background": "#141b2b",
+                      "surface": "#f9f9ff",
+                      "inverse-surface": "#293040",
+                      "secondary-fixed": "#ffdbca",
+                      "on-surface-variant": "#434652",
+                      "inverse-primary": "#b1c5ff",
+                      "error": "#ba1a1a",
+                      "secondary-fixed-dim": "#ffb690",
+                      "outline-variant": "#c4c6d3",
+                      "tertiary-container": "#0f36a6",
+                      "on-primary-container": "#8dadff",
+                      "on-tertiary-fixed-variant": "#173bab",
+                      "surface-container-lowest": "#ffffff",
+                      "on-secondary": "#ffffff",
+                      "surface-tint": "#345baf",
+                      "primary-container": "#0b3d91",
+                      "on-surface": "#141b2b",
+                      "surface-bright": "#f9f9ff",
+                      "on-primary-fixed": "#001947",
+                      "surface-container-high": "#e1e8fd",
+                      "primary-fixed-dim": "#b1c5ff",
+                      "inverse-on-surface": "#edf0ff",
+                      "on-primary-fixed-variant": "#144296",
+                      "on-secondary-fixed": "#341100",
+                      "secondary-container": "#fd761a",
+                      "surface-container": "#e9edff",
+                      "error-container": "#ffdad6",
+                      "background": "#f9f9ff",
+                      "outline": "#747783",
+                      "on-secondary-fixed-variant": "#783200",
+                      "secondary": "#9d4300",
+                      "on-error": "#ffffff",
+                      "on-tertiary": "#ffffff",
+                      "surface-variant": "#dce2f7",
+                      "primary-fixed": "#dae2ff",
+                      "on-tertiary-container": "#97abff",
+                      "surface-container-highest": "#dce2f7",
+                      "surface-container-low": "#f1f3ff",
+                      "tertiary-fixed-dim": "#b8c4ff",
+                      "on-primary": "#ffffff",
+                      "on-error-container": "#93000a",
+                      "tertiary-fixed": "#dde1ff",
+                      "primary": "#002869",
+                      "tertiary": "#00227a"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "sidebar-width": "260px",
+                      "base": "4px",
+                      "md": "16px",
+                      "lg": "24px",
+                      "gutter": "20px",
+                      "xs": "4px",
+                      "container-max": "1440px",
+                      "sm": "8px",
+                      "xl": "32px"
+              },
+              "fontFamily": {
+                      "body-lg": ["Inter"],
+                      "body-md": ["Inter"],
+                      "h2": ["Inter"],
+                      "h3": ["Inter"],
+                      "h1": ["Inter"],
+                      "label-md": ["Inter"],
+                      "label-sm": ["Inter"]
+              },
+              "fontSize": {
+                      "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "h2": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "h3": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "h1": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #f1f5f9; /* Extra light gray for background */
+        }
+    </style>
+</head>
+<body class="font-body-md text-on-background flex items-center justify-center min-h-screen p-md">
+<!-- Login Container -->
+<main class="w-full max-w-[440px] bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden border border-outline-variant/30">
+<!-- Header / Logo Section -->
+<div class="px-xl pt-xl pb-md text-center flex flex-col items-center gap-sm">
+<div class="w-16 h-16 bg-primary-container rounded-xl flex items-center justify-center shadow-md mb-sm">
+<span class="material-symbols-outlined text-white text-4xl" data-icon="school">school</span>
+</div>
+<h1 class="font-h1 text-primary-container">Quang Trung MN</h1>
+<p class="font-body-md text-outline">Hệ thống quản lý mầm non chuyên nghiệp</p>
+</div>
+<!-- Form Section -->
+<div class="px-xl pb-xl pt-sm">
+<form class="flex flex-col gap-lg">
+<!-- Email Input -->
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-on-surface" for="email">Email đăng nhập</label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-outline text-[20px]" data-icon="mail">mail</span>
+<input class="w-full pl-10 pr-4 py-3 bg-surface-container-low border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary-container focus:border-transparent outline-none transition-all font-body-md" id="email" name="email" placeholder="name@school.edu.vn" type="email"/>
+</div>
+</div>
+<!-- Password Input -->
+<div class="flex flex-col gap-xs">
+<div class="flex justify-between items-center">
+<label class="font-label-md text-on-surface" for="password">Mật khẩu</label>
+<a class="text-label-sm text-primary-container hover:underline" href="#">Quên mật khẩu?</a>
+</div>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-outline text-[20px]" data-icon="lock">lock</span>
+<input class="w-full pl-10 pr-10 py-3 bg-surface-container-low border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary-container focus:border-transparent outline-none transition-all font-body-md" id="password" name="password" placeholder="••••••••" type="password"/>
+<button class="absolute right-3 text-outline hover:text-on-surface transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="visibility">visibility</span>
+</button>
+</div>
+</div>
+<!-- Remember Me -->
+<div class="flex items-center gap-sm">
+<input class="w-5 h-5 rounded border-outline-variant text-primary-container focus:ring-primary-container" id="remember" type="checkbox"/>
+<label class="font-body-md text-on-surface-variant cursor-pointer select-none" for="remember">Ghi nhớ đăng nhập</label>
+</div>
+<!-- Action Button -->
+<button class="w-full bg-primary-container text-white py-3.5 rounded-lg font-label-md hover:bg-tertiary-container transition-all shadow-md active:scale-[0.98] flex items-center justify-center gap-2" type="submit">
+<span>Đăng nhập</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="login">login</span>
+</button>
+</form>
+<!-- Secondary Action -->
+<div class="mt-xl pt-lg border-t border-outline-variant/30 text-center">
+<p class="font-body-md text-on-surface-variant mb-sm">Bạn chưa có tài khoản?</p>
+<a class="inline-flex items-center gap-xs text-secondary-container font-label-md hover:text-secondary transition-colors px-4 py-2 rounded-full border border-secondary-container/20 bg-secondary-container/5" href="#">
+<span class="material-symbols-outlined text-[18px]" data-icon="person_add">person_add</span>
+                    Đăng ký tài khoản phụ huynh
+                </a>
+</div>
+</div>
+<!-- System Footer -->
+<div class="bg-surface-container-low/50 px-xl py-sm flex justify-center items-center">
+<span class="text-[10px] text-outline uppercase tracking-widest font-bold">Secure Education Portal</span>
+</div>
+</main>
+<!-- Decorative Elements (Contextual Background) -->
+<div class="fixed top-0 left-0 w-full h-full -z-10 pointer-events-none opacity-40">
+<div class="absolute top-[10%] left-[5%] w-64 h-64 bg-primary-container/5 rounded-full blur-3xl"></div>
+<div class="absolute bottom-[10%] right-[5%] w-80 h-80 bg-secondary-container/5 rounded-full blur-3xl"></div>
+</div>
+</body></html>

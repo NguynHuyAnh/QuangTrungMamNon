@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Quản lý Thu phí - Mầm Non Global</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed": "#ffdbca",
+                        "on-secondary-fixed": "#341100",
+                        "background": "#f9f9ff",
+                        "tertiary-fixed": "#dde1ff",
+                        "on-secondary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "on-secondary-container": "#5c2400",
+                        "surface-bright": "#f9f9ff",
+                        "tertiary-fixed-dim": "#b8c4ff",
+                        "on-primary-fixed": "#001947",
+                        "inverse-surface": "#293040",
+                        "outline": "#747783",
+                        "tertiary": "#00227a",
+                        "primary-fixed-dim": "#b1c5ff",
+                        "secondary-fixed-dim": "#ffb690",
+                        "primary": "#002869",
+                        "on-tertiary-fixed-variant": "#173bab",
+                        "on-tertiary-container": "#97abff",
+                        "on-primary-fixed-variant": "#144296",
+                        "inverse-on-surface": "#edf0ff",
+                        "error": "#ba1a1a",
+                        "surface-dim": "#d3daef",
+                        "inverse-primary": "#b1c5ff",
+                        "surface-container-highest": "#dce2f7",
+                        "on-tertiary-fixed": "#001453",
+                        "surface-container-low": "#f1f3ff",
+                        "on-primary-container": "#8dadff",
+                        "on-primary": "#ffffff",
+                        "surface-tint": "#345baf",
+                        "primary-container": "#0b3d91",
+                        "surface-variant": "#dce2f7",
+                        "surface-container-lowest": "#ffffff",
+                        "surface": "#f9f9ff",
+                        "on-surface-variant": "#434652",
+                        "on-error-container": "#93000a",
+                        "surface-container-high": "#e1e8fd",
+                        "on-background": "#141b2b",
+                        "outline-variant": "#c4c6d3",
+                        "secondary": "#9d4300",
+                        "on-secondary-fixed-variant": "#783200",
+                        "secondary-container": "#fd761a",
+                        "on-tertiary": "#ffffff",
+                        "on-surface": "#141b2b",
+                        "on-error": "#ffffff",
+                        "surface-container": "#e9edff",
+                        "tertiary-container": "#0f36a6",
+                        "primary-fixed": "#dae2ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xl": "32px",
+                        "sidebar-width": "260px",
+                        "sm": "8px",
+                        "gutter": "20px",
+                        "md": "16px",
+                        "base": "4px",
+                        "lg": "24px",
+                        "container-max": "1440px",
+                        "xs": "4px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "h1": ["Inter"],
+                        "body-md": ["Inter"],
+                        "h3": ["Inter"],
+                        "h2": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
+                        "h1": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "h3": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "h2": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .sidebar-active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            font-weight: 700;
+            border-left-width: 4px;
+            border-color: #f97316;
+        }
+    </style>
+</head>
+<body class="bg-background font-body-md text-on-background antialiased overflow-x-hidden">
+<!-- Fixed SideNavBar -->
+<aside class="fixed left-0 top-0 h-screen w-[260px] bg-[#0B3D91] dark:bg-slate-950 flex flex-col py-6 px-4 shadow-xl z-50">
+<div class="flex items-center gap-3 mb-10 px-2">
+<div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="school">school</span>
+</div>
+<div>
+<h1 class="text-white font-black tracking-tighter text-lg leading-tight">Mầm Non Global</h1>
+<p class="text-white/60 text-[10px] uppercase tracking-widest font-bold">Hệ thống quản lý</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-white/70 hover:text-white hover:bg-white/5 transition-all group" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-md">Trang chủ</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-white/70 hover:text-white hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="school">school</span>
+<span class="font-label-md">Quản lý lớp</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-white/70 hover:text-white hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="person_search">person_search</span>
+<span class="font-label-md">Học sinh</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-white/70 hover:text-white hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="rule">rule</span>
+<span class="font-label-md">Điểm danh</span>
+</a>
+<a class="sidebar-active flex items-center gap-3 px-4 py-3 rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="font-label-md">Học phí</span>
+</a>
+</nav>
+<div class="mt-auto border-t border-white/10 pt-6 space-y-1">
+<button class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-white bg-secondary-container hover:bg-secondary-container/90 transition-all font-bold mb-4 shadow-lg shadow-secondary-container/20">
+<span class="material-symbols-outlined" data-icon="add_circle">add_circle</span>
+<span class="font-label-md">Thêm học sinh mới</span>
+</button>
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-white/70 hover:text-white hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-md">Cài đặt</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-white/70 hover:text-white hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-label-md">Đăng xuất</span>
+</a>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="ml-[260px] min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="h-16 px-6 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center sticky top-0 z-40 shadow-sm">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-96">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl" data-icon="search">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-slate-50 border-none rounded-lg focus:ring-2 focus:ring-primary-container text-sm" placeholder="Tìm kiếm học sinh, mã hóa đơn..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-slate-500 hover:bg-slate-50 rounded-full transition-colors relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="p-2 text-slate-500 hover:bg-slate-50 rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+</button>
+<div class="h-8 w-[1px] bg-slate-200 mx-2"></div>
+<div class="flex items-center gap-3 pl-2">
+<div class="text-right">
+<p class="text-sm font-bold text-primary leading-none">Admin Kế Toán</p>
+<p class="text-xs text-slate-500">Quản trị viên</p>
+</div>
+<img alt="Administrator Profile" class="w-10 h-10 rounded-full object-cover border-2 border-primary-container/20" data-alt="A professional portrait of a female school administrator in her 40s, wearing business attire, smiling warmly in a bright, modern office environment. The lighting is clean and balanced, reflecting a trustworthy and organized professional persona. High-quality corporate photography with soft background blur focusing on the subject." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4El2VHIi67IKnoGsG2LexNjubIyYxI5I78UNg2oMAzDOCUZINpktQGldDZj0CltgLrPRWYOusoGhLVsFhDc77TQVQghG8SV32cEp1YEDtXEPFuinAOJwoVLfXDglASzoOf-W7xA0L2ov4ZJJApWzW9jNeKVl8nibWTI9QD-QVPLa2FmIwVIq5hGQujmwC6u7GhNoncfz9ZFNWLL8uEAt0xQ4p-BohnCFWQz7R6JRpy3BpfGgeuMMVVUl1vyJEG_SolNlvgmQROZYU"/>
+</div>
+</div>
+</header>
+<!-- Dashboard Body -->
+<div class="p-lg space-y-lg">
+<!-- Page Header & Stats Bento -->
+<div class="grid grid-cols-12 gap-gutter">
+<div class="col-span-12 lg:col-span-4 flex flex-col justify-center">
+<h2 class="font-h2 text-primary">Quản lý Thu phí &amp; Thanh toán</h2>
+<p class="text-on-surface-variant mt-1">Theo dõi và đối soát công nợ tháng 10/2023</p>
+<div class="flex gap-2 mt-6">
+<button class="px-4 py-2 bg-primary text-white rounded-lg font-bold flex items-center gap-2 hover:bg-tertiary transition-colors">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+                            Tạo phiếu thu
+                        </button>
+<button class="px-4 py-2 bg-white border border-outline-variant text-on-surface rounded-lg font-semibold flex items-center gap-2 hover:bg-slate-50 transition-colors">
+<span class="material-symbols-outlined" data-icon="file_download">file_download</span>
+                            Xuất báo cáo
+                        </button>
+</div>
+</div>
+<!-- KPI Cards -->
+<div class="col-span-12 md:col-span-4 lg:col-span-2 bg-white p-lg rounded-xl shadow-sm border border-slate-100 flex flex-col items-center text-center justify-center">
+<span class="text-slate-500 font-label-sm mb-2">Tổng số học sinh</span>
+<span class="text-4xl font-black text-secondary leading-none">128</span>
+<span class="text-xs text-emerald-600 font-bold mt-2 flex items-center">
+<span class="material-symbols-outlined text-sm" data-icon="trending_up">trending_up</span>
+                        +4 trong tháng
+                    </span>
+</div>
+<div class="col-span-12 md:col-span-4 lg:col-span-3 bg-white p-lg rounded-xl shadow-sm border border-slate-100 flex flex-col justify-center">
+<div class="flex justify-between items-start mb-2">
+<span class="text-slate-500 font-label-sm">Đã thu trong tháng</span>
+<div class="w-8 h-8 bg-emerald-50 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-emerald-600 text-lg" data-icon="check_circle">check_circle</span>
+</div>
+</div>
+<span class="text-2xl font-black text-on-background">425.800.000đ</span>
+<div class="w-full bg-slate-100 h-1.5 rounded-full mt-4 overflow-hidden">
+<div class="bg-emerald-500 h-full w-[72%]"></div>
+</div>
+<span class="text-[11px] text-slate-400 mt-2">Đạt 72% chỉ tiêu thu phí tháng 10</span>
+</div>
+<div class="col-span-12 md:col-span-4 lg:col-span-3 bg-white p-lg rounded-xl shadow-sm border border-slate-100 flex flex-col justify-center">
+<div class="flex justify-between items-start mb-2">
+<span class="text-slate-500 font-label-sm">Công nợ quá hạn</span>
+<div class="w-8 h-8 bg-error-container/30 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-error text-lg" data-icon="warning">warning</span>
+</div>
+</div>
+<span class="text-2xl font-black text-error">42.500.000đ</span>
+<p class="text-[11px] text-slate-500 mt-2">12 học sinh chưa hoàn tất học phí</p>
+</div>
+</div>
+<!-- Main Interactive Area -->
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Student Fee Table -->
+<div class="col-span-12 xl:col-span-8 bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+<div class="px-lg py-md border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+<h3 class="font-h3 text-primary">Danh sách học phí học sinh</h3>
+<div class="flex gap-2">
+<select class="text-sm border-slate-200 rounded-lg focus:ring-primary-container pr-8 py-1.5">
+<option>Tất cả các lớp</option>
+<option>Lớp Mầm A1</option>
+<option>Lớp Chồi B2</option>
+<option>Lớp Lá C1</option>
+</select>
+<select class="text-sm border-slate-200 rounded-lg focus:ring-primary-container pr-8 py-1.5">
+<option>Tất cả trạng thái</option>
+<option>Đã nộp</option>
+<option>Chưa nộp</option>
+<option>Quá hạn</option>
+</select>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-slate-50 text-primary uppercase text-[11px] font-bold tracking-wider">
+<th class="px-6 py-4">Mã HS</th>
+<th class="px-6 py-4">Họ và tên</th>
+<th class="px-6 py-4">Lớp</th>
+<th class="px-6 py-4">Số tiền cần nộp</th>
+<th class="px-6 py-4 text-center">Trạng thái</th>
+<th class="px-6 py-4 text-right">Thao tác</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100">
+<tr class="hover:bg-blue-50/30 transition-colors group">
+<td class="px-6 py-4 font-mono text-xs text-slate-500">HS-2023-01</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-slate-200 flex-shrink-0 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Close-up portrait of a cheerful preschool child with a bright smile, colorful background, vibrant lighting reflecting a joyful educational atmosphere, high definition digital photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCoaOZ3JKrpJOPO9F-L6iM7dlKOKEa2iKLkQrEt0tT6erTEjl2vVifO-thvBmPvuER0K09x2hqNw-1LcehZ2Ay9ere_4M8W89iUdW_vScSO-SYUWVqlFZGNRmDKsnJIwwxXKwEPSbHFoTTWJ9BO8ms_lP6W6tVRGndPQ9Eb95xW-43II2LC6uSIw1joYQzOy50HQeUsFYNKEK-CbGhPrMgq6YC3qfYUN3SBg0r4uUFtLbV0mkBuG_LvB8ukUuFM-7ONr15mPCvxaNSo"/>
+</div>
+<span class="font-semibold text-on-surface">Nguyễn Gia Huy</span>
+</div>
+</td>
+<td class="px-6 py-4 text-slate-600">Lớp Mầm A1</td>
+<td class="px-6 py-4 font-bold text-primary">5.200.000đ</td>
+<td class="px-6 py-4 text-center">
+<span class="px-3 py-1 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-700">Đã nộp</span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-primary hover:text-tertiary font-bold text-xs">Chi tiết</button>
+</td>
+</tr>
+<tr class="hover:bg-blue-50/30 transition-colors group">
+<td class="px-6 py-4 font-mono text-xs text-slate-500">HS-2023-14</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-slate-200 flex-shrink-0 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A candid photo of a little girl student in a preschool setting, playing with educational toys, soft natural daylight, shallow depth of field, warm and inviting atmosphere, school management interface style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAW8o6vzZv93mPU5K5OiWCh6nYKREUFuQh-4SgBto8ZsvMZ1LGYQuKESwDcwphxS07WX_RE-WCUVV0sxxnC1wnOJ-ob1gUake8j-DSNeto4JF-ClV7bjFf5Ikm9QHZBGg7IyKGS5iA3QsEPOLbOmHqxrvySl2UDTGvA98TEAkpNoAUvDB_icIgG9v9LTCbqVtvvx8afLVrLYwxQpVG8tbZ22L78GfND7KOrYnQANrJWf3YCQ1z_R6HBMpg0hZfYj_t0JbCy4aUpg12t"/>
+</div>
+<span class="font-semibold text-on-surface">Trần Phương Anh</span>
+</div>
+</td>
+<td class="px-6 py-4 text-slate-600">Lớp Lá C1</td>
+<td class="px-6 py-4 font-bold text-primary">4.850.000đ</td>
+<td class="px-6 py-4 text-center">
+<span class="px-3 py-1 rounded-full text-[11px] font-bold bg-orange-100 text-orange-700">Chờ duyệt</span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-primary hover:text-tertiary font-bold text-xs">Ghi nhận</button>
+</td>
+</tr>
+<tr class="hover:bg-blue-50/30 transition-colors group">
+<td class="px-6 py-4 font-mono text-xs text-slate-500">HS-2023-42</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-slate-200 flex-shrink-0 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A small boy with glasses smiling in a classroom, bright indirect lighting, academic and professional school environment style, clean composition, high-end digital imaging." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDx4DNxy6QGO2HMLO7ltTrhAd7cH7xpJVEXZhLk8s95U2EOqmTjNd8klOXEV47l4Xm9ZtBfPhTk9rYpUQd3DJimnBpnsLQzBmbb0HagiRwQQZClurGzgc6hkRpTIGShk5vE2z6KcuJx2tkz-33eW-EQp2DYXfKvZzV4jyG-wtsX6kmfQYZ2Dx5trFzmZU3S-fNmikE4CU2Xu0m9lqF-5yvuypBWHuD4ujOfT1-BO-VaON_WEgb7WZhNyQcvMWUMK0xkA2p7WjE0UVIY"/>
+</div>
+<span class="font-semibold text-on-surface">Lê Minh Khang</span>
+</div>
+</td>
+<td class="px-6 py-4 text-slate-600">Lớp Chồi B2</td>
+<td class="px-6 py-4 font-bold text-primary">6.100.000đ</td>
+<td class="px-6 py-4 text-center">
+<span class="px-3 py-1 rounded-full text-[11px] font-bold bg-red-100 text-red-700">Quá hạn</span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-secondary hover:text-secondary-container font-bold text-xs">Nhắc nợ</button>
+</td>
+</tr>
+<tr class="hover:bg-blue-50/30 transition-colors group">
+<td class="px-6 py-4 font-mono text-xs text-slate-500">HS-2023-05</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-slate-200 flex-shrink-0 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Portrait of a young student girl in a school uniform, looking into the camera with a confident smile, modern school lighting, minimalist white background, soft professional grade photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvJqnnQHi8ko2lUGgrrUREmojpn-CL6N14Zib833z1esrzglbz47ckb0aoRAzdQKBn9SKiqtPKB7kHHD8-vVF-XcYC531EZ7nrmJYHvw39wScMxyZwDxkgS_E9mTbZhQGdtsADX_niTkPndydWKXR24Kiy2nHw9KhGmBB9PARUv-IO3I5ez52i-agBPmNSbxP6FuLEKErajB5U-UzLDPczuvM9aENLPKIum2Uv4eTRJooIOGn6SF1xv0hxg8XLUHcirHeKcVXsdM_4"/>
+</div>
+<span class="font-semibold text-on-surface">Phạm Ngọc Lan</span>
+</div>
+</td>
+<td class="px-6 py-4 text-slate-600">Lớp Mầm A1</td>
+<td class="px-6 py-4 font-bold text-primary">5.200.000đ</td>
+<td class="px-6 py-4 text-center">
+<span class="px-3 py-1 rounded-full text-[11px] font-bold bg-slate-100 text-slate-500">Chưa nộp</span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-primary hover:text-tertiary font-bold text-xs">Ghi nhận</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="px-lg py-4 border-t border-slate-100 bg-slate-50/30 flex justify-between items-center">
+<p class="text-xs text-slate-500 italic">Hiển thị 4 trên 128 học sinh</p>
+<div class="flex gap-1">
+<button class="w-8 h-8 flex items-center justify-center rounded border border-slate-200 hover:bg-white text-slate-400"><span class="material-symbols-outlined text-sm" data-icon="chevron_left">chevron_left</span></button>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-primary bg-primary text-white text-xs font-bold">1</button>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-slate-200 hover:bg-white text-slate-600 text-xs font-bold">2</button>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-slate-200 hover:bg-white text-slate-600 text-xs font-bold">3</button>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-slate-200 hover:bg-white text-slate-400"><span class="material-symbols-outlined text-sm" data-icon="chevron_right">chevron_right</span></button>
+</div>
+</div>
+</div>
+<!-- Payment Integration & ZaloPay Panel -->
+<div class="col-span-12 xl:col-span-4 space-y-gutter">
+<!-- Quick Fee Recording -->
+<div class="bg-white rounded-xl shadow-sm border border-slate-100 p-lg">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-primary" data-icon="history_edu">history_edu</span>
+<h3 class="font-bold text-primary">Ghi nhận nhanh</h3>
+</div>
+<div class="space-y-4">
+<div>
+<label class="text-xs font-bold text-slate-500 uppercase block mb-1">Mã học sinh/Tên</label>
+<input class="w-full border-slate-200 rounded-lg text-sm bg-slate-50 focus:ring-primary-container" readonly="" type="text" value="Nguyễn Gia Huy (HS-2023-01)"/>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<button class="py-3 border-2 border-primary-container bg-primary-container/5 rounded-xl flex flex-col items-center justify-center gap-1 transition-all hover:bg-primary-container/10">
+<span class="material-symbols-outlined text-primary" data-icon="payments">payments</span>
+<span class="text-xs font-bold text-primary">Tiền mặt</span>
+</button>
+<button class="py-3 border-2 border-slate-100 bg-white rounded-xl flex flex-col items-center justify-center gap-1 transition-all hover:border-primary-container/20">
+<span class="material-symbols-outlined text-slate-400" data-icon="account_balance">account_balance</span>
+<span class="text-xs font-bold text-slate-500">Chuyển khoản</span>
+</button>
+</div>
+<button class="w-full py-3 bg-primary text-white rounded-lg font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
+                                Xác nhận nộp học phí
+                            </button>
+</div>
+</div>
+<!-- ZaloPay Sandbox Integration -->
+<div class="bg-gradient-to-br from-[#008FE5] to-[#0068FF] rounded-xl shadow-lg p-lg text-white relative overflow-hidden">
+<!-- Decorative glow -->
+<div class="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-3xl"></div>
+<div class="absolute -bottom-10 -left-10 w-40 h-40 bg-orange-500/20 rounded-full blur-3xl"></div>
+<div class="relative z-10">
+<div class="flex justify-between items-start mb-6">
+<div>
+<h3 class="font-h3 leading-tight">Thanh toán ZaloPay</h3>
+<p class="text-white/80 text-xs mt-1">Cổng thanh toán Sandbox trực tuyến</p>
+</div>
+<div class="bg-white p-1 rounded-md">
+<img alt="ZaloPay Logo" class="h-6 object-contain" data-alt="ZaloPay official logo on a white background, featuring the blue and white brand colors, clean professional fintech branding." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDcDt5RzujtjNMQJFWJ_mY3qOvQO_ptvjpDavkpGe1DAADLcUpXOFS7Q2oXrfhIKMc9-A6JLW1QfCcwD80Q_-Nk0pR5ueoZU8je-gWvNWWZAzL2fkXDd5D_aX8wBStfWr8PZP17cL5oRNF165OriMrXNVhPyUq2-lw_Jys2vXuFBWmcDT4489JRJxBMfcDw-8Epvd1gxfVUAc6jIohHoIaSSoX-p0A7b_lBYDo8vNwltlNtg-rv5be6qcrWrkNL_LzlmJUY-5Q3JGSA"/>
+</div>
+</div>
+<div class="bg-white rounded-xl p-4 flex flex-col items-center text-on-surface mb-6">
+<div class="bg-slate-50 w-full rounded-lg p-4 flex flex-col items-center border border-dashed border-slate-300">
+<!-- QR Code Mockup -->
+<div class="relative p-2 bg-white rounded-lg shadow-inner mb-3">
+<img alt="QR Code Demo" class="w-32 h-32 opacity-80" data-alt="A clean, high-resolution QR code used for digital payment testing. The QR code is perfectly centered on a white square, surrounded by a subtle shadow, representing a modern contactless payment method in a SaaS interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCc4hBzJXWEJorONSAV7prwJ8vYZMNHFxxqhTv5i_fFbDGtotjliwswcwKPIpvyuFFWnKnNbLxK_liC5BvyXX5Hy6YkJR82s72kjSVtF3pJACkRmwU0w3j2gqLjZLx2xaMGzkT8OJOdafG17L_ncj0boVze8KGBhxPRhyWQkokp_ns7a3usvPYHI_btOuMO5nPYQfVSvZXVXALa4Gqf23bgXkj4xQFWOSh2lbV3ZaHI_lA0p9Nx1QnCOCq0piOpj4pNtNEF3l6_eDxw"/>
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="w-8 h-8 bg-white rounded shadow-md flex items-center justify-center p-0.5">
+<img alt="Mini ZaloPay Logo" class="w-full h-full object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuATp3dTrmJqpts0OqcF1WIPudDXkqCj_4AiN20QSGsZuZaHg4ytByI8p5Ibqu5mZUn4uN9OdmNTPsHEPktr0Ymn0wc9ZMBV3qK0P2otIlSPYQJtkXXfVTHAY358AuiAuXQj3dmi_bT1pIhC8SXz9KBI-EibPaJfj7nDkRb7M6nUoS1p8dECQEuPRIMqHz0y6uo-tGV2LC-Rv2E-RFzGpTxQ0zfsRO4cDoqUy3u7eSaWNUt0bQZZXCQ1V1WLJtzv2Md98jGXVuVjLwF5"/>
+</div>
+</div>
+</div>
+<p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Mã QR Thanh Toán Demo</p>
+</div>
+</div>
+<button class="w-full py-4 bg-[#F97316] text-white rounded-xl font-black text-lg shadow-xl shadow-orange-900/20 flex items-center justify-center gap-3 hover:bg-orange-600 transition-all active:scale-95">
+<span class="material-symbols-outlined" data-icon="qr_code_scanner" style="font-variation-settings: 'FILL' 1;">qr_code_scanner</span>
+                                Tạo đơn hàng ZaloPay
+                            </button>
+<p class="text-[10px] text-center mt-4 text-white/60">
+                                * Đây là môi trường thử nghiệm (Sandbox). Tiền sẽ không bị trừ thực tế.
+                            </p>
+</div>
+</div>
+<!-- Recent Transactions Mini-list -->
+<div class="bg-white rounded-xl shadow-sm border border-slate-100 p-lg">
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-bold text-primary flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="receipt_long">receipt_long</span>
+                                Giao dịch gần đây
+                            </h3>
+<button class="text-[11px] font-bold text-secondary uppercase hover:underline">Xem tất cả</button>
+</div>
+<div class="space-y-3">
+<div class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-lg transition-colors">
+<div class="w-8 h-8 bg-emerald-50 rounded-full flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-emerald-600 text-sm" data-icon="north_east">north_east</span>
+</div>
+<div class="flex-1 min-w-0">
+<p class="text-xs font-bold text-on-surface truncate">Nộp học phí T10 - Gia Huy</p>
+<p class="text-[10px] text-slate-400">10:24 AM • Tiền mặt</p>
+</div>
+<span class="text-xs font-black text-emerald-600">+5.2M</span>
+</div>
+<div class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-lg transition-colors">
+<div class="w-8 h-8 bg-blue-50 rounded-full flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-blue-600 text-sm" data-icon="smartphone">smartphone</span>
+</div>
+<div class="flex-1 min-w-0">
+<p class="text-xs font-bold text-on-surface truncate">ZaloPay - Phương Anh</p>
+<p class="text-[10px] text-slate-400">09:15 AM • ZaloPay App</p>
+</div>
+<span class="text-xs font-black text-blue-600">+4.8M</span>
+</div>
+<div class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-lg transition-colors">
+<div class="w-8 h-8 bg-emerald-50 rounded-full flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-emerald-600 text-sm" data-icon="north_east">north_east</span>
+</div>
+<div class="flex-1 min-w-0">
+<p class="text-xs font-bold text-on-surface truncate">Tiền ăn sáng - Minh Khang</p>
+<p class="text-[10px] text-slate-400">Hôm qua • Chuyển khoản</p>
+</div>
+<span class="text-xs font-black text-emerald-600">+1.2M</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Fees Configuration Section -->
+<div class="bg-white rounded-xl shadow-sm border border-slate-100 p-lg">
+<div class="flex justify-between items-center mb-6">
+<div>
+<h3 class="font-h3 text-primary">Cấu hình các khoản phí thu trong tháng</h3>
+<p class="text-on-surface-variant text-sm">Quản lý các danh mục phí áp dụng cho toàn trường</p>
+</div>
+<button class="px-4 py-2 bg-slate-100 text-primary rounded-lg font-bold text-sm hover:bg-slate-200 transition-colors">Thêm khoản phí</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="p-4 border border-slate-100 rounded-xl bg-slate-50/50 flex flex-col">
+<span class="text-xs font-bold text-slate-400 uppercase tracking-tighter mb-1">Học phí chính khóa</span>
+<span class="text-xl font-black text-primary">4.500.000đ</span>
+<p class="text-[11px] text-slate-500 mt-2">Áp dụng cho: Mầm, Chồi, Lá</p>
+</div>
+<div class="p-4 border border-slate-100 rounded-xl bg-slate-50/50 flex flex-col">
+<span class="text-xs font-bold text-slate-400 uppercase tracking-tighter mb-1">Tiền ăn &amp; Phụ phí</span>
+<span class="text-xl font-black text-primary">1.200.000đ</span>
+<p class="text-[11px] text-slate-500 mt-2">Cố định hàng tháng</p>
+</div>
+<div class="p-4 border border-slate-100 rounded-xl bg-slate-50/50 flex flex-col">
+<span class="text-xs font-bold text-slate-400 uppercase tracking-tighter mb-1">Anh văn tăng cường</span>
+<span class="text-xl font-black text-primary">800.000đ</span>
+<p class="text-[11px] text-slate-500 mt-2">Khoản thu tự chọn</p>
+</div>
+<div class="p-4 border border-slate-100 rounded-xl bg-slate-50/50 flex flex-col">
+<span class="text-xs font-bold text-slate-400 uppercase tracking-tighter mb-1">Phí xe đưa đón</span>
+<span class="text-xl font-black text-primary">1.500.000đ</span>
+<p class="text-[11px] text-slate-500 mt-2">Theo quãng đường &gt; 5km</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer -->
+<footer class="mt-auto py-6 px-lg border-t border-slate-200 bg-white text-center text-slate-400 text-xs">
+            © 2023 Mầm Non Global - Hệ thống quản lý giáo dục thông minh. ZaloPay Merchant Sandbox Integration.
+        </footer>
+</main>
+</body></html>
