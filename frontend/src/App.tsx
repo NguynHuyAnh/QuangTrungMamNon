@@ -22,6 +22,8 @@ import { ResetPasswordPage } from './pages/ResetPasswordPage';
 import { StudentsPage } from './pages/StudentsPage';
 import { UsersPage } from './pages/UsersPage';
 import { ZaloPayReturnRedirectPage } from './pages/ZaloPayReturnRedirectPage';
+import { FoodDeclaration } from "./pages/admin/FoodDeclaration";
+import { TeacherMenuManager } from "./pages/admin/TeacherMenuManager";
 
 function HomeRedirect() {
   const { isAuthenticated, roles } = useAuth();
@@ -38,6 +40,8 @@ export default function App() {
       <Route path="/reset-password" element={<ResetPasswordPage />} />
       <Route path="/register-parent" element={<RegisterParentPage />} />
       <Route path="/payment/zalopay/done" element={<ZaloPayReturnRedirectPage />} />
+      <Route path="/admin-food" element={<FoodDeclaration />} />
+      <Route path="/teacher-menu" element={<TeacherMenuManager />} />
 
       <Route
         path="/app"
@@ -78,3 +82,4 @@ export default function App() {
     </Routes>
   );
 }
+
