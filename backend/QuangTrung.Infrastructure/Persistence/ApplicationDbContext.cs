@@ -21,6 +21,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Payment> Payments => Set<Payment>();
     public DbSet<ZaloPayOrder> ZaloPayOrders => Set<ZaloPayOrder>();
     public DbSet<UserStudentLink> UserStudentLinks => Set<UserStudentLink>();
+    public DbSet<Timetable> Timetables => Set<Timetable>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -115,5 +116,20 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             e.HasOne<ApplicationUser>().WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
             e.Property(x => x.Relationship).HasMaxLength(64);
         });
+
+        builder.Entity<Timetable>(e =>
+{
+    e.ToTable("Timetables");
+
+    e.Property(x => x.Subject)
+        .HasMaxLength(128);
+
+    e.HasIndex(x => new
+    {
+        x.ClassId,
+        x.DayOfWeek,
+        x.Period
+    }).IsUnique();
+});
     }
 }
