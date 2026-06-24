@@ -179,6 +179,91 @@ public static class DataSeeder
         await EnsureExtraDemoData(db, ct);
         await RemoveDemoStudentLeVanTimKiem(db, ct);
         await EnsureStudentRegistrationCodes(db, ct);
+        await EnsureMenuDemoData(db, ct);
+    }
+
+    /// <summary>Seed danh mục món + thực đơn hôm nay (toàn trường) để demo có dữ liệu ngay.</summary>
+    private static async Task EnsureMenuDemoData(ApplicationDbContext db, CancellationToken ct)
+    {
+        var year = await db.SchoolYears.AsNoTracking().OrderByDescending(y => y.IsCurrent).ThenByDescending(y => y.StartDate).FirstOrDefaultAsync(ct);
+        if (year is null)
+            return;
+
+        if (!await db.Dishes.AnyAsync(ct))
+        {
+            db.Dishes.AddRange(
+                new Dish { Id = Guid.NewGuid(), Name = "Cháo thịt bằm rau củ", Ingredients = "Gạo tẻ, thịt heo xay, cà rốt, đậu hà lan", NutritionNote = "Giàu tinh bột và đạm", CaloriesKcal = 180, ContainsAllergen = false, IsActive = true, CreatedAt = DateTime.UtcNow },
+                new Dish { Id = Guid.NewGuid(), Name = "Sữa tươi tiệt trùng", Ingredients = "Sữa bò nguyên chất", NutritionNote = "Giàu canxi", CaloriesKcal = 120, ContainsAllergen = true, AllergenNote = "Chứa sữa (lactose)", IsActive = true, CreatedAt = DateTime.UtcNow },
+                new Dish { Id = Guid.NewGuid(), Name = "Cơm trắng", Ingredients = "Gạo tẻ dẻo", CaloriesKcal = 200, ContainsAllergen = false, IsActive = true, CreatedAt = DateTime.UtcNow },
+                new Dish { Id = Guid.NewGuid(), Name = "Thịt kho trứng cút", Ingredients = "Thịt ba chỉ heo, trứng cút, nước dừa, nước mắm", NutritionNote = "Giàu đạm và chất béo", CaloriesKcal = 220, ContainsAllergen = false, IsActive = true, CreatedAt = DateTime.UtcNow },
+                new Dish { Id = Guid.NewGuid(), Name = "Canh rau ngót nấu thịt", Ingredients = "Rau ngót, thịt heo xay, hành tím", NutritionNote = "Giàu vitamin C và sắt", CaloriesKcal = 80, ContainsAllergen = false, IsActive = true, CreatedAt = DateTime.UtcNow },
+                new Dish { Id = Guid.NewGuid(), Name = "Dưa hấu tráng miệng", Ingredients = "Dưa hấu tươi", NutritionNote = "Thanh mát, bổ sung nước", CaloriesKcal = 40, ContainsAllergen = false, IsActive = true, CreatedAt = DateTime.UtcNow });
+            await db.SaveChangesAsync(ct);
+        }
+
+        var todayVn = DateOnly.FromDateTime(DateTime.UtcNow.AddHours(7));
+        if (!await db.DailyMenus.AnyAsync(m => m.MenuDate == todayVn, ct))
+        {
+            var creatorId = await db.Users.AsNoTracking()
+                .Where(u => u.Email == "bangiamhieu@demo.local" || u.Email == "giaovien@demo.local")
+                .OrderBy(u => u.Email)
+                .Select(u => (Guid?)u.Id)
+                .FirstOrDefaultAsync(ct);
+            if (creatorId is null)
+                return;
+
+            var dishes = await db.Dishes.AsNoTracking().Where(d => !d.IsDeleted).ToListAsync(ct);
+            Dish? Find(string name) => dishes.FirstOrDefault(d => d.Name == name);
+
+            DailyMenuItem Snapshot(Dish? d, int order) => new()
+            {
+                Id = Guid.NewGuid(),
+                DishId = d?.Id,
+                DishName = d?.Name ?? "Món",
+                Ingredients = d?.Ingredients,
+                NutritionNote = d?.NutritionNote,
+                CaloriesKcal = d?.CaloriesKcal,
+                ContainsAllergen = d?.ContainsAllergen ?? false,
+                AllergenNote = d?.AllergenNote,
+                DisplayOrder = order
+            };
+
+            db.DailyMenus.Add(new DailyMenu
+            {
+                Id = Guid.NewGuid(),
+                MenuDate = todayVn,
+                MealType = MealType.BuaSang,
+                ClassId = null,
+                SchoolYearId = year.Id,
+                Description = "Bữa sáng dinh dưỡng, dễ tiêu hóa.",
+                CreatedByUserId = creatorId.Value,
+                CreatedAt = DateTime.UtcNow,
+                Items = new List<DailyMenuItem>
+                {
+                    Snapshot(Find("Cháo thịt bằm rau củ"), 0),
+                    Snapshot(Find("Sữa tươi tiệt trùng"), 1)
+                }
+            });
+            db.DailyMenus.Add(new DailyMenu
+            {
+                Id = Guid.NewGuid(),
+                MenuDate = todayVn,
+                MealType = MealType.BuaTrua,
+                ClassId = null,
+                SchoolYearId = year.Id,
+                Description = "Thực đơn đầy đủ 4 nhóm chất.",
+                CreatedByUserId = creatorId.Value,
+                CreatedAt = DateTime.UtcNow,
+                Items = new List<DailyMenuItem>
+                {
+                    Snapshot(Find("Cơm trắng"), 0),
+                    Snapshot(Find("Thịt kho trứng cút"), 1),
+                    Snapshot(Find("Canh rau ngót nấu thịt"), 2),
+                    Snapshot(Find("Dưa hấu tráng miệng"), 3)
+                }
+            });
+            await db.SaveChangesAsync(ct);
+        }
     }
 
     /// <summary>Xóa học sinh demo từng dùng cho test tiền tố ID — tránh fee/thanh toán thử làm phiền production demo.</summary>

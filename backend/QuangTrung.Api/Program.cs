@@ -90,6 +90,15 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy(AppPolicies.AnnouncementsClassDraft,
         p => p.RequireRole(AppRoles.GiaoVien, AppRoles.BanGiamHieu, AppRoles.SuperAdmin));
 
+    options.AddPolicy(AppPolicies.DishesRead,
+        p => p.RequireRole(AppRoles.BanGiamHieu, AppRoles.GiaoVien, AppRoles.SuperAdmin));
+    options.AddPolicy(AppPolicies.DishesWrite,
+        p => p.RequireRole(AppRoles.BanGiamHieu, AppRoles.SuperAdmin));
+
+    options.AddPolicy(AppPolicies.MenuRead, p => p.RequireAuthenticatedUser());
+    options.AddPolicy(AppPolicies.MenuWrite,
+        p => p.RequireRole(AppRoles.GiaoVien, AppRoles.BanGiamHieu, AppRoles.SuperAdmin));
+
     options.AddPolicy(AppPolicies.FeesRead,
         p => p.RequireRole(AppRoles.KeToan, AppRoles.BanGiamHieu, AppRoles.SuperAdmin));
     options.AddPolicy(AppPolicies.FeesWrite,

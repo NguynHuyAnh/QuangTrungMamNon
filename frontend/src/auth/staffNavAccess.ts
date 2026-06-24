@@ -15,6 +15,16 @@ export function canStaffAccessAttendanceNav(roles: string[]) {
   return roles.some((r) => r === 'BanGiamHieu' || r === 'GiaoVien' || r === 'SuperAdmin' || r === 'PhuHuynh');
 }
 
+/** Danh mục loại thức ăn — policy Dishes.Write (Ban giám hiệu + SuperAdmin). */
+export function canStaffAccessDishesNav(roles: string[]) {
+  return roles.some((r) => r === 'BanGiamHieu' || r === 'SuperAdmin');
+}
+
+/** Thực đơn hằng ngày — policy Menu.Write (Giáo viên + BGH + SuperAdmin). */
+export function canStaffAccessMenuNav(roles: string[]) {
+  return roles.some((r) => r === 'BanGiamHieu' || r === 'GiaoVien' || r === 'SuperAdmin');
+}
+
 /** Xuất báo cáo CSV — policy Dashboard.Export (Ban giám hiệu + SuperAdmin). */
 export function canExportDashboardReport(roles: string[]) {
   return roles.some((r) => r === 'BanGiamHieu' || r === 'SuperAdmin');

@@ -5,6 +5,8 @@ import {
   canAccessUserDirectory,
   canStaffAccessAttendanceNav,
   canStaffAccessCatalogNav,
+  canStaffAccessDishesNav,
+  canStaffAccessMenuNav,
   canStaffAccessStudentsNav,
 } from '../auth/staffNavAccess';
 import { MaterialSymbol } from '../components/MaterialSymbol';
@@ -26,6 +28,8 @@ const navItems: NavItem[] = [
   { to: '/app/students', label: 'Học sinh', icon: 'person_search', visibleIf: canStaffAccessStudentsNav },
   { to: '/app/attendance', label: 'Điểm danh', icon: 'fact_check', visibleIf: canStaffAccessAttendanceNav },
   { to: '/app/announcements', label: 'Thông báo', icon: 'campaign' },
+  { to: '/app/dishes', label: 'Loại thức ăn', icon: 'restaurant', visibleIf: canStaffAccessDishesNav },
+  { to: '/app/menu', label: 'Thực đơn', icon: 'restaurant_menu', visibleIf: canStaffAccessMenuNav },
   { to: '/app/fee-structures', label: 'Biểu phí', icon: 'request_quote', feesModule: true },
   { to: '/app/fee-assignments', label: 'Gán phí', icon: 'assignment', feesModule: true },
   { to: '/app/payments', label: 'Thanh toán', icon: 'payments', feesModule: true },

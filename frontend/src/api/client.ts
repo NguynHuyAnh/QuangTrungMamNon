@@ -1,3 +1,11 @@
+import type {
+  DailyMenuDetail,
+  DailyMenuSummary,
+  DishRow,
+  UpsertDailyMenuBody,
+  UpsertDishBody,
+} from '../types/menu';
+
 const apiBase = () => (import.meta.env.VITE_API_BASE_URL as string | undefined) ?? '';
 
 const debugApi =
@@ -1073,5 +1081,114 @@ export async function postParentLinkStudent(
     method: 'POST',
     headers: authJson(accessToken),
     body: JSON.stringify({ code: body.code.trim() }),
+  });
+}
+
+// ===== Thực đơn (Menu) =====
+
+/** Danh mục loại thức ăn. Đọc: BGH/GV/SuperAdmin. */
+export async function getDishesPaged(
+  accessToken: string,
+  params?: { q?: string; activeOnly?: boolean; page?: number; pageSize?: number },
+): Promise<PagedResult<DishRow>> {
+  const sp = new URLSearchParams();
+  if (params?.q) sp.set('q', params.q);
+  if (params?.activeOnly) sp.set('activeOnly', 'true');
+  if (params?.page) sp.set('page', String(params.page));
+  sp.set('pageSize', String(params?.pageSize ?? 20));
+  return fetchJson<PagedResult<DishRow>>(`/api/dishes?${sp.toString()}`, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+}
+
+export async function createDish(accessToken: string, body: UpsertDishBody): Promise<{ id: string }> {
+  return fetchJson<{ id: string }>('/api/dishes', {
+    method: 'POST',
+    headers: authJson(accessToken),
+    body: JSON.stringify(body),
+  });
+}
+
+export async function updateDish(accessToken: string, id: string, body: UpsertDishBody): Promise<void> {
+  return fetchJson<void>(`/api/dishes/${id}`, {
+    method: 'PUT',
+    headers: authJson(accessToken),
+    body: JSON.stringify(body),
+  });
+}
+
+export async function deleteDish(accessToken: string, id: string): Promise<void> {
+  return fetchJson<void>(`/api/dishes/${id}`, {
+    method: 'DELETE',
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+}
+
+/** Danh sách / lịch sử thực đơn. Phụ huynh chỉ thấy thực đơn lớp con + toàn trường. */
+export async function getDailyMenusPaged(
+  accessToken: string,
+  params?: {
+    date?: string;
+    from?: string;
+    to?: string;
+    mealType?: number;
+    classId?: string;
+    page?: number;
+    pageSize?: number;
+  },
+): Promise<PagedResult<DailyMenuSummary>> {
+  const sp = new URLSearchParams();
+  if (params?.date) sp.set('date', params.date);
+  if (params?.from) sp.set('from', params.from);
+  if (params?.to) sp.set('to', params.to);
+  if (params?.mealType !== undefined) sp.set('mealType', String(params.mealType));
+  if (params?.classId) sp.set('classId', params.classId);
+  if (params?.page) sp.set('page', String(params.page));
+  sp.set('pageSize', String(params?.pageSize ?? 20));
+  return fetchJson<PagedResult<DailyMenuSummary>>(`/api/daily-menus?${sp.toString()}`, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+}
+
+/** Thực đơn hôm nay áp dụng cho người dùng hiện tại (kèm món). */
+export async function getTodayMenus(accessToken: string): Promise<DailyMenuDetail[]> {
+  return fetchJson<DailyMenuDetail[]>('/api/daily-menus/today', {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+}
+
+export async function getDailyMenuById(accessToken: string, id: string): Promise<DailyMenuDetail> {
+  return fetchJson<DailyMenuDetail>(`/api/daily-menus/${id}`, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+}
+
+export async function createDailyMenu(
+  accessToken: string,
+  body: UpsertDailyMenuBody,
+): Promise<{ id: string }> {
+  return fetchJson<{ id: string }>('/api/daily-menus', {
+    method: 'POST',
+    headers: authJson(accessToken),
+    body: JSON.stringify(body),
+  });
+}
+
+export async function updateDailyMenu(
+  accessToken: string,
+  id: string,
+  body: UpsertDailyMenuBody,
+): Promise<void> {
+  return fetchJson<void>(`/api/daily-menus/${id}`, {
+    method: 'PUT',
+    headers: authJson(accessToken),
+    body: JSON.stringify(body),
+  });
+}
+
+export async function deleteDailyMenu(accessToken: string, id: string): Promise<void> {
+  return fetchJson<void>(`/api/daily-menus/${id}`, {
+    method: 'DELETE',
+    headers: { Authorization: `Bearer ${accessToken}` },
   });
 }

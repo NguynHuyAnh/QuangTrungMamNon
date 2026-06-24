@@ -7,6 +7,8 @@ import { AnnouncementsPage } from './pages/AnnouncementsPage';
 import { AttendancePage } from './pages/AttendancePage';
 import { CatalogPage } from './pages/CatalogPage';
 import { DashboardPage } from './pages/DashboardPage';
+import { DishesPage } from './pages/DishesPage';
+import { MenuPage } from './pages/MenuPage';
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
 import { FeeAssignmentsPage } from './pages/FeeAssignmentsPage';
 import { FeeStructuresPage } from './pages/FeeStructuresPage';
@@ -16,6 +18,7 @@ import { PaymentsPage } from './pages/PaymentsPage';
 import { ParentAnnouncementsPage } from './pages/parent/ParentAnnouncementsPage';
 import { ParentAttendancePage } from './pages/parent/ParentAttendancePage';
 import { ParentDashboardPage } from './pages/parent/ParentDashboardPage';
+import { ParentMenuPage } from './pages/parent/ParentMenuPage';
 import { ParentPaymentsPage } from './pages/parent/ParentPaymentsPage';
 import { RegisterParentPage } from './pages/RegisterParentPage';
 import { ResetPasswordPage } from './pages/ResetPasswordPage';
@@ -54,6 +57,8 @@ export default function App() {
         <Route path="students" element={<StudentsPage />} />
         <Route path="attendance" element={<AttendancePage />} />
         <Route path="announcements" element={<AnnouncementsPage />} />
+        <Route path="dishes" element={<DishesPage />} />
+        <Route path="menu" element={<MenuPage />} />
         <Route path="fee-structures" element={<FeeStructuresPage />} />
         <Route path="fee-assignments" element={<FeeAssignmentsPage />} />
         <Route path="payments" element={<PaymentsPage />} />
@@ -71,6 +76,7 @@ export default function App() {
         <Route index element={<ParentDashboardPage />} />
         <Route path="attendance" element={<ParentAttendancePage />} />
         <Route path="announcements" element={<ParentAnnouncementsPage />} />
+        <Route path="menu" element={<ParentMenuPage />} />
         <Route path="payments" element={<ParentPaymentsPage />} />
       </Route>
 

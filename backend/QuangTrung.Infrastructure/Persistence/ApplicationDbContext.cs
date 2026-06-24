@@ -21,6 +21,9 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Payment> Payments => Set<Payment>();
     public DbSet<ZaloPayOrder> ZaloPayOrders => Set<ZaloPayOrder>();
     public DbSet<UserStudentLink> UserStudentLinks => Set<UserStudentLink>();
+    public DbSet<Dish> Dishes => Set<Dish>();
+    public DbSet<DailyMenu> DailyMenus => Set<DailyMenu>();
+    public DbSet<DailyMenuItem> DailyMenuItems => Set<DailyMenuItem>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -114,6 +117,29 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             e.HasOne(x => x.Student).WithMany().HasForeignKey(x => x.StudentId).OnDelete(DeleteBehavior.Cascade);
             e.HasOne<ApplicationUser>().WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
             e.Property(x => x.Relationship).HasMaxLength(64);
+        });
+
+        builder.Entity<Dish>(e =>
+        {
+            e.Property(x => x.Name).HasMaxLength(256);
+            e.HasIndex(x => x.Name);
+        });
+
+        builder.Entity<DailyMenu>(e =>
+        {
+            e.HasOne(x => x.Class).WithMany().HasForeignKey(x => x.ClassId).OnDelete(DeleteBehavior.SetNull);
+            e.HasOne(x => x.SchoolYear).WithMany().HasForeignKey(x => x.SchoolYearId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<ApplicationUser>().WithMany().HasForeignKey(x => x.CreatedByUserId).OnDelete(DeleteBehavior.Restrict);
+            // Mỗi (ngày, bữa, lớp) tối đa một thực đơn. ClassId NULL (toàn trường) được kiểm tra thêm ở controller
+            // vì Postgres coi các NULL là khác nhau trong unique index.
+            e.HasIndex(x => new { x.MenuDate, x.MealType, x.ClassId }).IsUnique();
+        });
+
+        builder.Entity<DailyMenuItem>(e =>
+        {
+            e.Property(x => x.DishName).HasMaxLength(256);
+            e.HasOne(x => x.DailyMenu).WithMany(m => m.Items).HasForeignKey(x => x.DailyMenuId).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(x => x.Dish).WithMany().HasForeignKey(x => x.DishId).OnDelete(DeleteBehavior.Restrict);
         });
     }
 }

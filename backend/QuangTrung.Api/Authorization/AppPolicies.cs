@@ -23,6 +23,16 @@ public static class AppPolicies
     public const string AnnouncementsPublishSchool = "Announcements.PublishSchool";
     public const string AnnouncementsClassDraft = "Announcements.ClassDraft";
 
+    /// <summary>Đọc danh mục loại thức ăn (GV cần để chọn món khi lập thực đơn).</summary>
+    public const string DishesRead = "Dishes.Read";
+    /// <summary>CRUD danh mục loại thức ăn — Ban giám hiệu + SuperAdmin.</summary>
+    public const string DishesWrite = "Dishes.Write";
+
+    /// <summary>Xem thực đơn — mọi tài khoản đã đăng nhập (gồm phụ huynh).</summary>
+    public const string MenuRead = "Menu.Read";
+    /// <summary>Tạo / sửa / xóa thực đơn hằng ngày — Giáo viên + BGH + SuperAdmin.</summary>
+    public const string MenuWrite = "Menu.Write";
+
     public const string FeesRead = "Fees.Read";
     public const string FeesWrite = "Fees.Write";
     /// <summary>Đọc phân công học phí theo học sinh (kế toán + phụ huynh chỉ thấy con liên kết).</summary>

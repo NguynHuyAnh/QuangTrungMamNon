@@ -6,6 +6,7 @@ const items = [
   { to: '/parent', label: 'Trang chủ', icon: 'home', end: true },
   { to: '/parent/attendance', label: 'Điểm danh', icon: 'calendar_today' },
   { to: '/parent/announcements', label: 'Thông báo', icon: 'campaign' },
+  { to: '/parent/menu', label: 'Thực đơn', icon: 'restaurant_menu' },
   { to: '/parent/payments', label: 'Học phí', icon: 'account_balance_wallet' },
 ];
 
