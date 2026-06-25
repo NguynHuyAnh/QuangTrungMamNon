@@ -47,6 +47,17 @@ export type DailyMenuItem = {
   displayOrder: number;
 };
 
+// Trạng thái duyệt thực đơn (QuangTrung.Domain.Enums.MenuStatus) serialize thành số 0..2.
+export const MENU_STATUS = [
+  { value: 0, label: 'Nháp' },
+  { value: 1, label: 'Đã duyệt' },
+  { value: 2, label: 'Đã công bố' },
+] as const;
+
+export function menuStatusLabel(value: number): string {
+  return MENU_STATUS.find((m) => m.value === value)?.label ?? `Trạng thái ${value}`;
+}
+
 export type DailyMenuSummary = {
   id: string;
   menuDate: string; // "2026-06-24"
@@ -57,6 +68,7 @@ export type DailyMenuSummary = {
   dishCount: number;
   createdByName: string;
   createdAt: string;
+  status: number;
 };
 
 export type DailyMenuDetail = {
@@ -70,6 +82,9 @@ export type DailyMenuDetail = {
   createdByName: string;
   createdAt: string;
   updatedAt?: string | null;
+  status: number;
+  approvedByName?: string | null;
+  approvedAt?: string | null;
   items: DailyMenuItem[];
 };
 

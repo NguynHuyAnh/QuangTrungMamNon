@@ -7,6 +7,8 @@ import {
   getDailyMenusPaged,
   getDishesPaged,
   getSchoolYearsCurrent,
+  publishDailyMenu,
+  revertDailyMenuToDraft,
   updateDailyMenu,
   type ClassRow,
 } from '../api/client';
@@ -16,11 +18,22 @@ import { ModalPortal } from '../components/ModalPortal';
 import {
   MEAL_TYPES,
   mealTypeLabel,
+  menuStatusLabel,
   type DailyMenuItem,
   type DailyMenuSummary,
   type DishRow,
   type UpsertDailyMenuBody,
 } from '../types/menu';
+
+function canApproveMenu(roles: string[]) {
+  return roles.some((r) => r === 'BanGiamHieu' || r === 'SuperAdmin');
+}
+
+const menuStatusBadge: Record<number, string> = {
+  0: 'bg-amber-100 text-amber-700',
+  1: 'bg-blue-100 text-blue-700',
+  2: 'bg-green-100 text-green-700',
+};
 
 const PAGE_SIZE = 15;
 
@@ -61,7 +74,9 @@ const emptyBuilder: BuilderState = {
 };
 
 export function MenuPage() {
-  const { accessToken } = useAuth();
+  const { accessToken, roles } = useAuth();
+  const canApprove = canApproveMenu(roles);
+  const [statusBusyId, setStatusBusyId] = useState<string | null>(null);
 
   // Bộ lọc danh sách
   const [filterDate, setFilterDate] = useState('');
@@ -268,6 +283,22 @@ export function MenuPage() {
     }
   };
 
+  const doSetStatus = async (id: string, publish: boolean) => {
+    if (!accessToken) return;
+    setStatusBusyId(id);
+    setError(null);
+    try {
+      if (publish) await publishDailyMenu(accessToken, id);
+      else await revertDailyMenuToDraft(accessToken, id);
+      setSuccessMessage(publish ? 'Đã công bố thực đơn.' : 'Đã thu hồi về nháp.');
+      await refreshList();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Cập nhật trạng thái thất bại.');
+    } finally {
+      setStatusBusyId(null);
+    }
+  };
+
   const filteredDishes = useMemo(() => {
     const q = dishQuery.trim().toLowerCase();
     if (!q) return dishes;
@@ -381,11 +412,34 @@ export function MenuPage() {
                       {m.className ?? classNameById.get(m.classId ?? '') ?? 'Toàn trường'}
                     </span>
                     <span className="text-xs text-slate-400">{m.dishCount} món</span>
+                    <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${menuStatusBadge[m.status] ?? 'bg-slate-100 text-slate-600'}`}>
+                      {menuStatusLabel(m.status)}
+                    </span>
                   </div>
                   {m.description ? <p className="mt-1 text-xs text-slate-500">{m.description}</p> : null}
                   <p className="mt-1 text-[11px] text-slate-400">Người lập: {m.createdByName || '—'}</p>
                 </div>
                 <div className="flex items-center gap-2">
+                  {canApprove && m.status !== 2 ? (
+                    <button
+                      type="button"
+                      disabled={statusBusyId === m.id}
+                      onClick={() => void doSetStatus(m.id, true)}
+                      className="rounded-lg border border-green-200 bg-green-50 px-2 py-1.5 text-xs font-bold text-green-700 hover:bg-green-100 disabled:opacity-50"
+                    >
+                      Công bố
+                    </button>
+                  ) : null}
+                  {canApprove && m.status === 2 ? (
+                    <button
+                      type="button"
+                      disabled={statusBusyId === m.id}
+                      onClick={() => void doSetStatus(m.id, false)}
+                      className="rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs font-bold text-slate-600 hover:bg-slate-50 disabled:opacity-50"
+                    >
+                      Thu hồi
+                    </button>
+                  ) : null}
                   <button
                     type="button"
                     onClick={() => void openEdit(m.id)}

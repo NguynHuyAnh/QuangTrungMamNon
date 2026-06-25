@@ -55,4 +55,52 @@ public static class AppPolicies
     public const string DashboardRead = "Dashboard.Read";
     /// <summary>Xuất báo cáo tổng quan (CSV) — Ban giám hiệu + SuperAdmin.</summary>
     public const string DashboardExport = "Dashboard.Export";
+
+    // ----- Danh mục môn học chính khóa -----
+    public const string SubjectsRead = "Subjects.Read";
+    public const string SubjectsWrite = "Subjects.Write";
+
+    // ----- Thời khóa biểu -----
+    /// <summary>Xem TKB — mọi tài khoản (phụ huynh lọc theo lớp con).</summary>
+    public const string TimetableRead = "Timetable.Read";
+    /// <summary>Xếp/sửa TKB — Ban giám hiệu + SuperAdmin.</summary>
+    public const string TimetableWrite = "Timetable.Write";
+
+    // ----- Báo cáo sức khỏe -----
+    /// <summary>Xem báo cáo sức khỏe — staff + phụ huynh (chỉ con liên kết).</summary>
+    public const string HealthRead = "Health.Read";
+    /// <summary>Ghi báo cáo sức khỏe — Giáo viên/Y tế + BGH + SuperAdmin.</summary>
+    public const string HealthWrite = "Health.Write";
+
+    // ----- Duyệt thực đơn -----
+    /// <summary>Duyệt/công bố thực đơn — Ban giám hiệu + SuperAdmin.</summary>
+    public const string MenuApprove = "Menu.Approve";
+
+    // ----- Môn năng khiếu (ngoài giờ) -----
+    /// <summary>Xem danh mục môn năng khiếu — mọi tài khoản đã đăng nhập.</summary>
+    public const string ExternalSubjectsRead = "ExternalSubjects.Read";
+    /// <summary>CRUD danh mục môn năng khiếu — Ban giám hiệu + SuperAdmin.</summary>
+    public const string ExternalSubjectsWrite = "ExternalSubjects.Write";
+    /// <summary>Xem đăng ký môn năng khiếu — staff + kế toán + phụ huynh (con liên kết).</summary>
+    public const string EnrollmentRead = "Enrollment.Read";
+    /// <summary>Đăng ký/hủy môn năng khiếu — Giáo viên + BGH + SuperAdmin.</summary>
+    public const string EnrollmentWrite = "Enrollment.Write";
+    /// <summary>Xác nhận thu học phí môn năng khiếu — Kế toán + SuperAdmin.</summary>
+    public const string EnrollmentCollectFee = "Enrollment.CollectFee";
+
+    // ----- Đơn nghỉ phép học sinh -----
+    /// <summary>Gửi đơn nghỉ học sinh — phụ huynh + giáo viên + BGH + SuperAdmin.</summary>
+    public const string StudentLeaveCreate = "StudentLeave.Create";
+    /// <summary>Duyệt đơn nghỉ học sinh — giáo viên + BGH + SuperAdmin.</summary>
+    public const string StudentLeaveApprove = "StudentLeave.Approve";
+    /// <summary>Xem đơn nghỉ học sinh — staff + phụ huynh (con liên kết).</summary>
+    public const string StudentLeaveRead = "StudentLeave.Read";
+
+    // ----- Đơn nghỉ phép giáo viên/nhân viên (HR) -----
+    /// <summary>Gửi đơn nghỉ phép nhân viên — mọi nhân viên (không gồm phụ huynh).</summary>
+    public const string StaffLeaveCreate = "StaffLeave.Create";
+    /// <summary>Duyệt đơn nghỉ phép nhân viên — BGH + SuperAdmin.</summary>
+    public const string StaffLeaveApprove = "StaffLeave.Approve";
+    /// <summary>Xem đơn nghỉ phép nhân viên — nhân viên (của mình) + BGH/SuperAdmin (tất cả).</summary>
+    public const string StaffLeaveRead = "StaffLeave.Read";
 }

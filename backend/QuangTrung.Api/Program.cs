@@ -126,6 +126,47 @@ builder.Services.AddAuthorization(options =>
         p => p.RequireRole(AppRoles.BanGiamHieu, AppRoles.GiaoVien, AppRoles.KeToan, AppRoles.SuperAdmin));
     options.AddPolicy(AppPolicies.DashboardExport,
         p => p.RequireRole(AppRoles.BanGiamHieu, AppRoles.SuperAdmin));
+
+    options.AddPolicy(AppPolicies.SubjectsRead,
+        p => p.RequireRole(AppRoles.BanGiamHieu, AppRoles.GiaoVien, AppRoles.SuperAdmin));
+    options.AddPolicy(AppPolicies.SubjectsWrite,
+        p => p.RequireRole(AppRoles.BanGiamHieu, AppRoles.SuperAdmin));
+
+    options.AddPolicy(AppPolicies.TimetableRead, p => p.RequireAuthenticatedUser());
+    options.AddPolicy(AppPolicies.TimetableWrite,
+        p => p.RequireRole(AppRoles.BanGiamHieu, AppRoles.SuperAdmin));
+
+    options.AddPolicy(AppPolicies.HealthRead,
+        p => p.RequireRole(AppRoles.BanGiamHieu, AppRoles.GiaoVien, AppRoles.SuperAdmin, AppRoles.PhuHuynh));
+    options.AddPolicy(AppPolicies.HealthWrite,
+        p => p.RequireRole(AppRoles.GiaoVien, AppRoles.BanGiamHieu, AppRoles.SuperAdmin));
+
+    options.AddPolicy(AppPolicies.MenuApprove,
+        p => p.RequireRole(AppRoles.BanGiamHieu, AppRoles.SuperAdmin));
+
+    options.AddPolicy(AppPolicies.ExternalSubjectsRead, p => p.RequireAuthenticatedUser());
+    options.AddPolicy(AppPolicies.ExternalSubjectsWrite,
+        p => p.RequireRole(AppRoles.BanGiamHieu, AppRoles.SuperAdmin));
+    options.AddPolicy(AppPolicies.EnrollmentRead,
+        p => p.RequireRole(AppRoles.BanGiamHieu, AppRoles.GiaoVien, AppRoles.SuperAdmin, AppRoles.KeToan, AppRoles.PhuHuynh));
+    options.AddPolicy(AppPolicies.EnrollmentWrite,
+        p => p.RequireRole(AppRoles.GiaoVien, AppRoles.BanGiamHieu, AppRoles.SuperAdmin));
+    options.AddPolicy(AppPolicies.EnrollmentCollectFee,
+        p => p.RequireRole(AppRoles.KeToan, AppRoles.SuperAdmin));
+
+    options.AddPolicy(AppPolicies.StudentLeaveCreate,
+        p => p.RequireRole(AppRoles.PhuHuynh, AppRoles.GiaoVien, AppRoles.BanGiamHieu, AppRoles.SuperAdmin));
+    options.AddPolicy(AppPolicies.StudentLeaveApprove,
+        p => p.RequireRole(AppRoles.GiaoVien, AppRoles.BanGiamHieu, AppRoles.SuperAdmin));
+    options.AddPolicy(AppPolicies.StudentLeaveRead,
+        p => p.RequireRole(AppRoles.BanGiamHieu, AppRoles.GiaoVien, AppRoles.SuperAdmin, AppRoles.PhuHuynh));
+
+    options.AddPolicy(AppPolicies.StaffLeaveCreate,
+        p => p.RequireRole(AppRoles.GiaoVien, AppRoles.KeToan, AppRoles.BanGiamHieu, AppRoles.SuperAdmin));
+    options.AddPolicy(AppPolicies.StaffLeaveApprove,
+        p => p.RequireRole(AppRoles.BanGiamHieu, AppRoles.SuperAdmin));
+    options.AddPolicy(AppPolicies.StaffLeaveRead,
+        p => p.RequireRole(AppRoles.GiaoVien, AppRoles.KeToan, AppRoles.BanGiamHieu, AppRoles.SuperAdmin));
 });
 
 var app = builder.Build();

@@ -26,12 +26,14 @@ public sealed class DailyMenusController(ApplicationDbContext db) : ControllerBa
 
     public sealed record DailyMenuSummary(
         Guid Id, DateOnly MenuDate, MealType MealType, Guid? ClassId, string? ClassName,
-        string? Description, int DishCount, string CreatedByName, DateTime CreatedAt);
+        string? Description, int DishCount, string CreatedByName, DateTime CreatedAt,
+        MenuStatus Status);
 
     public sealed record DailyMenuDetail(
         Guid Id, DateOnly MenuDate, MealType MealType, Guid? ClassId, string? ClassName,
         Guid SchoolYearId, string? Description, string CreatedByName, DateTime CreatedAt,
-        DateTime? UpdatedAt, IReadOnlyList<DailyMenuItemDto> Items);
+        DateTime? UpdatedAt, MenuStatus Status, string? ApprovedByName, DateTime? ApprovedAt,
+        IReadOnlyList<DailyMenuItemDto> Items);
 
     private Guid CurrentUserId => Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
@@ -49,9 +51,18 @@ public sealed class DailyMenusController(ApplicationDbContext db) : ControllerBa
             .ToListAsync(ct);
     }
 
-    /// <summary>Áp filter hiển thị theo role: phụ huynh chỉ thấy toàn trường + lớp con.</summary>
+    /// <summary>
+    /// Áp filter hiển thị theo role: phụ huynh chỉ thấy toàn trường + lớp con. Ngoài ra chỉ
+    /// người soạn/duyệt (GV/BGH/SuperAdmin) thấy thực đơn chưa công bố; còn lại chỉ thấy Published.
+    /// </summary>
     private async Task<IQueryable<DailyMenu>> ApplyVisibilityAsync(IQueryable<DailyMenu> query, CancellationToken ct)
     {
+        var canSeeUnpublished = User.IsInRole(AppRoles.GiaoVien)
+            || User.IsInRole(AppRoles.BanGiamHieu)
+            || User.IsInRole(AppRoles.SuperAdmin);
+        if (!canSeeUnpublished)
+            query = query.Where(m => m.Status == MenuStatus.Published);
+
         if (User.IsInRole(AppRoles.PhuHuynh))
         {
             var classIds = await GetParentClassIdsAsync(ct);
@@ -95,7 +106,7 @@ public sealed class DailyMenusController(ApplicationDbContext db) : ControllerBa
                 m.Class != null ? m.Class.Name : null,
                 m.Description, m.Items.Count,
                 db.Users.Where(u => u.Id == m.CreatedByUserId).Select(u => u.FullName).FirstOrDefault() ?? "",
-                m.CreatedAt))
+                m.CreatedAt, m.Status))
             .ToListAsync(ct);
         return Ok(new PagedResult<DailyMenuSummary> { Items = items, TotalCount = total, Page = p, PageSize = ps });
     }
@@ -130,7 +141,11 @@ public sealed class DailyMenusController(ApplicationDbContext db) : ControllerBa
                 m.Class != null ? m.Class.Name : null,
                 m.SchoolYearId, m.Description,
                 db.Users.Where(u => u.Id == m.CreatedByUserId).Select(u => u.FullName).FirstOrDefault() ?? "",
-                m.CreatedAt, m.UpdatedAt,
+                m.CreatedAt, m.UpdatedAt, m.Status,
+                m.ApprovedByUserId != null
+                    ? db.Users.Where(u => u.Id == m.ApprovedByUserId).Select(u => u.FullName).FirstOrDefault()
+                    : null,
+                m.ApprovedAt,
                 m.Items.OrderBy(i => i.DisplayOrder)
                     .Select(i => new DailyMenuItemDto(
                         i.DishId, i.DishName, i.Ingredients, i.NutritionNote,
@@ -172,6 +187,7 @@ public sealed class DailyMenusController(ApplicationDbContext db) : ControllerBa
             SchoolYearId = schoolYearId.Value,
             Description = string.IsNullOrWhiteSpace(dto.Description) ? null : dto.Description.Trim(),
             CreatedByUserId = CurrentUserId,
+            Status = MenuStatus.Draft,
             CreatedAt = DateTime.UtcNow,
             Items = items
         };
@@ -227,6 +243,40 @@ public sealed class DailyMenusController(ApplicationDbContext db) : ControllerBa
         if (entity is null)
             return NotFound();
         db.DailyMenus.Remove(entity); // Items xóa theo cascade
+        await db.SaveChangesAsync(ct);
+        return NoContent();
+    }
+
+    /// <summary>Công bố thực đơn (Published) để phụ huynh nhìn thấy — chỉ BGH/SuperAdmin.</summary>
+    [HttpPost("{id:guid}/publish")]
+    [Authorize(Policy = AppPolicies.MenuApprove)]
+    public async Task<IActionResult> Publish(Guid id, CancellationToken ct)
+    {
+        var entity = await db.DailyMenus.FirstOrDefaultAsync(m => m.Id == id, ct);
+        if (entity is null)
+            return NotFound();
+
+        entity.Status = MenuStatus.Published;
+        entity.ApprovedByUserId = CurrentUserId;
+        entity.ApprovedAt = DateTime.UtcNow;
+        entity.UpdatedAt = DateTime.UtcNow;
+        await db.SaveChangesAsync(ct);
+        return NoContent();
+    }
+
+    /// <summary>Thu hồi thực đơn về nháp (ẩn khỏi phụ huynh) — chỉ BGH/SuperAdmin.</summary>
+    [HttpPost("{id:guid}/revert-draft")]
+    [Authorize(Policy = AppPolicies.MenuApprove)]
+    public async Task<IActionResult> RevertToDraft(Guid id, CancellationToken ct)
+    {
+        var entity = await db.DailyMenus.FirstOrDefaultAsync(m => m.Id == id, ct);
+        if (entity is null)
+            return NotFound();
+
+        entity.Status = MenuStatus.Draft;
+        entity.ApprovedByUserId = null;
+        entity.ApprovedAt = null;
+        entity.UpdatedAt = DateTime.UtcNow;
         await db.SaveChangesAsync(ct);
         return NoContent();
     }

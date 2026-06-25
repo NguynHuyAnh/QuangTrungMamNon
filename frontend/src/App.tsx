@@ -9,6 +9,12 @@ import { CatalogPage } from './pages/CatalogPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { DishesPage } from './pages/DishesPage';
 import { MenuPage } from './pages/MenuPage';
+import { SubjectsPage } from './pages/SubjectsPage';
+import { TimetablePage } from './pages/TimetablePage';
+import { HealthReportsPage } from './pages/HealthReportsPage';
+import { ExternalSubjectsPage } from './pages/ExternalSubjectsPage';
+import { StudentLeavePage } from './pages/StudentLeavePage';
+import { StaffLeavePage } from './pages/StaffLeavePage';
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
 import { FeeAssignmentsPage } from './pages/FeeAssignmentsPage';
 import { FeeStructuresPage } from './pages/FeeStructuresPage';
@@ -59,6 +65,12 @@ export default function App() {
         <Route path="announcements" element={<AnnouncementsPage />} />
         <Route path="dishes" element={<DishesPage />} />
         <Route path="menu" element={<MenuPage />} />
+        <Route path="subjects" element={<SubjectsPage />} />
+        <Route path="timetable" element={<TimetablePage />} />
+        <Route path="health" element={<HealthReportsPage />} />
+        <Route path="external-subjects" element={<ExternalSubjectsPage />} />
+        <Route path="student-leave" element={<StudentLeavePage />} />
+        <Route path="staff-leave" element={<StaffLeavePage />} />
         <Route path="fee-structures" element={<FeeStructuresPage />} />
         <Route path="fee-assignments" element={<FeeAssignmentsPage />} />
         <Route path="payments" element={<PaymentsPage />} />

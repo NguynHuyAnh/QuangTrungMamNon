@@ -46,7 +46,7 @@ function parseErrorFromText(text: string, statusText: string, status: number): s
   return text.slice(0, 500);
 }
 
-async function fetchJson<T>(path: string, init?: RequestInit): Promise<T> {
+export async function fetchJson<T>(path: string, init?: RequestInit): Promise<T> {
   const url = `${apiBase()}${path}`;
   const method = init?.method ?? 'GET';
   const res = await fetch(url, init);
@@ -155,8 +155,12 @@ export async function getMyChildren(accessToken: string): Promise<ChildRow[]> {
   });
 }
 
-function authJson(accessToken: string): HeadersInit {
+export function authJson(accessToken: string): HeadersInit {
   return { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' };
+}
+
+export function authHeader(accessToken: string): HeadersInit {
+  return { Authorization: `Bearer ${accessToken}` };
 }
 
 export type PagedResult<T> = { items: T[]; totalCount: number; page: number; pageSize: number };
@@ -1189,6 +1193,20 @@ export async function updateDailyMenu(
 export async function deleteDailyMenu(accessToken: string, id: string): Promise<void> {
   return fetchJson<void>(`/api/daily-menus/${id}`, {
     method: 'DELETE',
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+}
+
+export async function publishDailyMenu(accessToken: string, id: string): Promise<void> {
+  return fetchJson<void>(`/api/daily-menus/${id}/publish`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+}
+
+export async function revertDailyMenuToDraft(accessToken: string, id: string): Promise<void> {
+  return fetchJson<void>(`/api/daily-menus/${id}/revert-draft`, {
+    method: 'POST',
     headers: { Authorization: `Bearer ${accessToken}` },
   });
 }

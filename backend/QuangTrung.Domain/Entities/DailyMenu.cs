@@ -15,6 +15,11 @@ public class DailyMenu
     public Guid SchoolYearId { get; set; }
     public string? Description { get; set; }
     public Guid CreatedByUserId { get; set; }
+    /// <summary>Trạng thái duyệt. Phụ huynh chỉ thấy <see cref="MenuStatus.Published"/>.</summary>
+    public MenuStatus Status { get; set; }
+    /// <summary>Người duyệt (BGH) — chỉ có khi đã duyệt/công bố.</summary>
+    public Guid? ApprovedByUserId { get; set; }
+    public DateTime? ApprovedAt { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
 

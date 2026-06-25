@@ -6,8 +6,14 @@ import {
   canStaffAccessAttendanceNav,
   canStaffAccessCatalogNav,
   canStaffAccessDishesNav,
+  canStaffAccessExternalSubjectsNav,
+  canStaffAccessHealthNav,
   canStaffAccessMenuNav,
+  canStaffAccessStaffLeaveNav,
+  canStaffAccessStudentLeaveNav,
   canStaffAccessStudentsNav,
+  canStaffAccessSubjectsNav,
+  canStaffAccessTimetableNav,
 } from '../auth/staffNavAccess';
 import { MaterialSymbol } from '../components/MaterialSymbol';
 
@@ -30,6 +36,12 @@ const navItems: NavItem[] = [
   { to: '/app/announcements', label: 'Thông báo', icon: 'campaign' },
   { to: '/app/dishes', label: 'Loại thức ăn', icon: 'restaurant', visibleIf: canStaffAccessDishesNav },
   { to: '/app/menu', label: 'Thực đơn', icon: 'restaurant_menu', visibleIf: canStaffAccessMenuNav },
+  { to: '/app/subjects', label: 'Môn học', icon: 'menu_book', visibleIf: canStaffAccessSubjectsNav },
+  { to: '/app/timetable', label: 'Thời khóa biểu', icon: 'calendar_view_week', visibleIf: canStaffAccessTimetableNav },
+  { to: '/app/health', label: 'Sức khỏe', icon: 'health_and_safety', visibleIf: canStaffAccessHealthNav },
+  { to: '/app/external-subjects', label: 'Môn năng khiếu', icon: 'sports_gymnastics', visibleIf: canStaffAccessExternalSubjectsNav },
+  { to: '/app/student-leave', label: 'Nghỉ phép HS', icon: 'event_busy', visibleIf: canStaffAccessStudentLeaveNav },
+  { to: '/app/staff-leave', label: 'Nghỉ phép GV', icon: 'badge', visibleIf: canStaffAccessStaffLeaveNav },
   { to: '/app/fee-structures', label: 'Biểu phí', icon: 'request_quote', feesModule: true },
   { to: '/app/fee-assignments', label: 'Gán phí', icon: 'assignment', feesModule: true },
   { to: '/app/payments', label: 'Thanh toán', icon: 'payments', feesModule: true },

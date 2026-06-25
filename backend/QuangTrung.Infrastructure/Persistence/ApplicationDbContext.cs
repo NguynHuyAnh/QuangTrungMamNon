@@ -24,6 +24,13 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Dish> Dishes => Set<Dish>();
     public DbSet<DailyMenu> DailyMenus => Set<DailyMenu>();
     public DbSet<DailyMenuItem> DailyMenuItems => Set<DailyMenuItem>();
+    public DbSet<Subject> Subjects => Set<Subject>();
+    public DbSet<ClassTimetable> ClassTimetables => Set<ClassTimetable>();
+    public DbSet<HealthReport> HealthReports => Set<HealthReport>();
+    public DbSet<ExternalSubject> ExternalSubjects => Set<ExternalSubject>();
+    public DbSet<StudentExternalSubject> StudentExternalSubjects => Set<StudentExternalSubject>();
+    public DbSet<StudentLeaveRequest> StudentLeaveRequests => Set<StudentLeaveRequest>();
+    public DbSet<StaffLeaveRequest> StaffLeaveRequests => Set<StaffLeaveRequest>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -130,6 +137,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             e.HasOne(x => x.Class).WithMany().HasForeignKey(x => x.ClassId).OnDelete(DeleteBehavior.SetNull);
             e.HasOne(x => x.SchoolYear).WithMany().HasForeignKey(x => x.SchoolYearId).OnDelete(DeleteBehavior.Restrict);
             e.HasOne<ApplicationUser>().WithMany().HasForeignKey(x => x.CreatedByUserId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<ApplicationUser>().WithMany().HasForeignKey(x => x.ApprovedByUserId).OnDelete(DeleteBehavior.Restrict);
             // Mỗi (ngày, bữa, lớp) tối đa một thực đơn. ClassId NULL (toàn trường) được kiểm tra thêm ở controller
             // vì Postgres coi các NULL là khác nhau trong unique index.
             e.HasIndex(x => new { x.MenuDate, x.MealType, x.ClassId }).IsUnique();
@@ -140,6 +148,69 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             e.Property(x => x.DishName).HasMaxLength(256);
             e.HasOne(x => x.DailyMenu).WithMany(m => m.Items).HasForeignKey(x => x.DailyMenuId).OnDelete(DeleteBehavior.Cascade);
             e.HasOne(x => x.Dish).WithMany().HasForeignKey(x => x.DishId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        builder.Entity<Subject>(e =>
+        {
+            e.Property(x => x.Code).HasMaxLength(50);
+            e.Property(x => x.Name).HasMaxLength(256);
+            e.Property(x => x.ColorCode).HasMaxLength(16);
+            e.HasIndex(x => x.Code).IsUnique();
+        });
+
+        builder.Entity<ClassTimetable>(e =>
+        {
+            e.Property(x => x.Room).HasMaxLength(64);
+            e.HasOne(x => x.SchoolYear).WithMany().HasForeignKey(x => x.SchoolYearId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.Class).WithMany().HasForeignKey(x => x.ClassId).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(x => x.Subject).WithMany().HasForeignKey(x => x.SubjectId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<ApplicationUser>().WithMany().HasForeignKey(x => x.TeacherId).OnDelete(DeleteBehavior.SetNull);
+            // Mỗi (lớp, năm học, thứ, tiết) tối đa một tiết. Check trùng GV/phòng làm thêm ở controller.
+            e.HasIndex(x => new { x.ClassId, x.SchoolYearId, x.DayOfWeek, x.SlotNo }).IsUnique();
+        });
+
+        builder.Entity<HealthReport>(e =>
+        {
+            e.Property(x => x.Height).HasColumnType("numeric(5,2)");
+            e.Property(x => x.Weight).HasColumnType("numeric(5,2)");
+            e.Property(x => x.Temperature).HasColumnType("numeric(4,1)");
+            e.Property(x => x.BloodPressure).HasMaxLength(20);
+            e.HasOne(x => x.Student).WithMany().HasForeignKey(x => x.StudentId).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne<ApplicationUser>().WithMany().HasForeignKey(x => x.CreatedByUserId).OnDelete(DeleteBehavior.Restrict);
+            e.HasIndex(x => new { x.StudentId, x.ReportDate });
+        });
+
+        builder.Entity<ExternalSubject>(e =>
+        {
+            e.Property(x => x.Code).HasMaxLength(50);
+            e.Property(x => x.Name).HasMaxLength(256);
+            e.Property(x => x.FeeAmount).HasColumnType("numeric(18,2)");
+            e.HasIndex(x => x.Code).IsUnique();
+            e.HasOne<ApplicationUser>().WithMany().HasForeignKey(x => x.TeacherId).OnDelete(DeleteBehavior.SetNull);
+        });
+
+        builder.Entity<StudentExternalSubject>(e =>
+        {
+            e.HasOne(x => x.Student).WithMany().HasForeignKey(x => x.StudentId).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(x => x.ExternalSubject).WithMany().HasForeignKey(x => x.ExternalSubjectId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<ApplicationUser>().WithMany().HasForeignKey(x => x.CollectedByUserId).OnDelete(DeleteBehavior.SetNull);
+            e.HasIndex(x => new { x.StudentId, x.ExternalSubjectId });
+        });
+
+        builder.Entity<StudentLeaveRequest>(e =>
+        {
+            e.Property(x => x.AttachmentUrl).HasMaxLength(512);
+            e.HasOne(x => x.Student).WithMany().HasForeignKey(x => x.StudentId).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne<ApplicationUser>().WithMany().HasForeignKey(x => x.RequestedByUserId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<ApplicationUser>().WithMany().HasForeignKey(x => x.ApprovedByUserId).OnDelete(DeleteBehavior.Restrict);
+            e.HasIndex(x => new { x.StudentId, x.FromDate });
+        });
+
+        builder.Entity<StaffLeaveRequest>(e =>
+        {
+            e.HasOne<ApplicationUser>().WithMany().HasForeignKey(x => x.StaffUserId).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne<ApplicationUser>().WithMany().HasForeignKey(x => x.ReviewedByUserId).OnDelete(DeleteBehavior.Restrict);
+            e.HasIndex(x => new { x.StaffUserId, x.FromDate });
         });
     }
 }
