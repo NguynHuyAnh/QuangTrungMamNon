@@ -17,6 +17,12 @@ database/exports/*.dump
 # Node dependencies (tạo lại bằng `npm install`)
 **/node_modules/
 
+# Frontend build output
+frontend/dist/
+
+# Visual Studio cache / build artifacts
+.vs/
+
 # Build output / publish thủ công (không cần commit)
 _compile_out/
 _compile_out2/

@@ -1354,8 +1354,6 @@ namespace QuangTrung.Infrastructure.Persistence.Migrations
 
                     b.Navigation("Class");
 
-                    b.Navigation("Items");
-
                     b.Navigation("SchoolYear");
                 });
 
