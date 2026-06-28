@@ -1,9 +1,9 @@
 <Solution>
-  <Folder Name="/src/">
-    <Project Path="src/QuangTrung.Api/QuangTrung.Api.csproj" />
-    <Project Path="src/QuangTrung.Application/QuangTrung.Application.csproj" />
-    <Project Path="src/QuangTrung.Domain/QuangTrung.Domain.csproj" />
-    <Project Path="src/QuangTrung.Infrastructure/QuangTrung.Infrastructure.csproj" />
+  <Folder Name="/backend/">
+    <Project Path="backend/QuangTrung.Api/QuangTrung.Api.csproj" />
+    <Project Path="backend/QuangTrung.Application/QuangTrung.Application.csproj" />
+    <Project Path="backend/QuangTrung.Domain/QuangTrung.Domain.csproj" />
+    <Project Path="backend/QuangTrung.Infrastructure/QuangTrung.Infrastructure.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/QuangTrung.Api.Tests/QuangTrung.Api.Tests.csproj" />
