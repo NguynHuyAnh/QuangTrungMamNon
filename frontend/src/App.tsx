@@ -89,6 +89,7 @@ export default function App() {
         <Route path="attendance" element={<ParentAttendancePage />} />
         <Route path="announcements" element={<ParentAnnouncementsPage />} />
         <Route path="menu" element={<ParentMenuPage />} />
+        <Route path="leave" element={<StudentLeavePage />} />
         <Route path="payments" element={<ParentPaymentsPage />} />
       </Route>
 

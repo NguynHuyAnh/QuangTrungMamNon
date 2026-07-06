@@ -180,6 +180,7 @@ public static class DataSeeder
         await RemoveDemoStudentLeVanTimKiem(db, ct);
         await EnsureStudentRegistrationCodes(db, ct);
         await EnsureMenuDemoData(db, ct);
+        await ShowcaseDataSeeder.EnsureShowcaseDataAsync(db, ct);
     }
 
     /// <summary>Seed danh mục món + thực đơn hôm nay (toàn trường) để demo có dữ liệu ngay.</summary>

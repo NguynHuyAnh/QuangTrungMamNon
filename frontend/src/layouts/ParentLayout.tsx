@@ -7,6 +7,7 @@ const items = [
   { to: '/parent/attendance', label: 'Điểm danh', icon: 'calendar_today' },
   { to: '/parent/announcements', label: 'Thông báo', icon: 'campaign' },
   { to: '/parent/menu', label: 'Thực đơn', icon: 'restaurant_menu' },
+  { to: '/parent/leave', label: 'Xin nghỉ phép', icon: 'event_busy' },
   { to: '/parent/payments', label: 'Học phí', icon: 'account_balance_wallet' },
 ];
 
