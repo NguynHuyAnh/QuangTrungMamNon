@@ -218,11 +218,13 @@ public sealed class StudentsController(ApplicationDbContext db) : ControllerBase
         return Ok(new PagedResult<StudentBillingViewRow> { Items = items, TotalCount = total, Page = p, PageSize = ps });
     }
 
+    public sealed record CreateStudentDto(string FullName, Gender Gender, DateOnly DateOfBirth, string? Address, string? HealthNote, string? AllergyNote);
+
     public sealed record UpsertStudentDto(string FullName, Gender Gender, DateOnly DateOfBirth, string? Address, string? HealthNote, string? AllergyNote, StudentStatus Status);
 
     [HttpPost]
     [Authorize(Policy = AppPolicies.StudentsWrite)]
-    public async Task<IActionResult> Create([FromBody] UpsertStudentDto dto, CancellationToken ct)
+    public async Task<IActionResult> Create([FromBody] CreateStudentDto dto, CancellationToken ct)
     {
         var entity = new Student
         {
@@ -233,7 +235,7 @@ public sealed class StudentsController(ApplicationDbContext db) : ControllerBase
             Address = dto.Address,
             HealthNote = dto.HealthNote,
             AllergyNote = dto.AllergyNote,
-            Status = dto.Status,
+            Status = StudentStatus.DangHoc,
             CreatedAt = DateTime.UtcNow
         };
         db.Students.Add(entity);

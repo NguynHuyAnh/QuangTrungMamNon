@@ -267,8 +267,16 @@ export type UpsertStudentBody = {
   allergyNote?: string | null;
   status: number;
 };
+export type CreateStudentBody = {
+  fullName: string;
+  gender: number;
+  dateOfBirth: string;
+  address?: string | null;
+  healthNote?: string | null;
+  allergyNote?: string | null;
+};
 
-export async function createStudent(accessToken: string, body: UpsertStudentBody): Promise<{ id: string }> {
+export async function createStudent(accessToken: string, body: CreateStudentBody): Promise<{ id: string }> {
   return fetchJson<{ id: string }>('/api/students', {
     method: 'POST',
     headers: authJson(accessToken),
@@ -493,7 +501,7 @@ export async function deleteClass(accessToken: string, id: string): Promise<void
   });
 }
 
-export type UserOptionRow = { id: string; email: string };
+export type UserOptionRow = { id: string; email: string; fullName: string };
 
 export type UserDirectoryRow = { id: string; email: string; fullName: string; roles: string[]; isLocked?: boolean };
 
@@ -722,6 +730,8 @@ export type FeeStructureRow = {
   name: string;
   amount: number;
   feeType: number;
+  feeCategoryId: string | null;
+  feeCategoryName: string | null;
 };
 
 export type UpsertFeeStructureBody = {
@@ -729,6 +739,18 @@ export type UpsertFeeStructureBody = {
   name: string;
   amount: number;
   feeType: number;
+  feeCategoryId: string | null;
+};
+
+export type FeeCategoryRow = {
+  id: string;
+  name: string;
+  description: string;
+};
+
+export type UpsertFeeCategoryBody = {
+  name: string;
+  description: string;
 };
 
 export async function getFeeStructuresPaged(
@@ -776,6 +798,41 @@ export async function updateFeeStructure(
 
 export async function deleteFeeStructure(accessToken: string, id: string): Promise<void> {
   return fetchJson<void>(`/api/fee-structures/${id}`, {
+    method: 'DELETE',
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+}
+
+export async function getFeeCategories(accessToken: string): Promise<FeeCategoryRow[]> {
+  return fetchJson<FeeCategoryRow[]>('/api/fee-categories', {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+}
+
+export async function getFeeCategoryById(accessToken: string, id: string): Promise<FeeCategoryRow> {
+  return fetchJson<FeeCategoryRow>(`/api/fee-categories/${id}`, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+}
+
+export async function createFeeCategory(accessToken: string, body: UpsertFeeCategoryBody): Promise<{ id: string }> {
+  return fetchJson<{ id: string }>('/api/fee-categories', {
+    method: 'POST',
+    headers: authJson(accessToken),
+    body: JSON.stringify(body),
+  });
+}
+
+export async function updateFeeCategory(accessToken: string, id: string, body: UpsertFeeCategoryBody): Promise<void> {
+  return fetchJson<void>(`/api/fee-categories/${id}`, {
+    method: 'PUT',
+    headers: authJson(accessToken),
+    body: JSON.stringify(body),
+  });
+}
+
+export async function deleteFeeCategory(accessToken: string, id: string): Promise<void> {
+  return fetchJson<void>(`/api/fee-categories/${id}`, {
     method: 'DELETE',
     headers: { Authorization: `Bearer ${accessToken}` },
   });

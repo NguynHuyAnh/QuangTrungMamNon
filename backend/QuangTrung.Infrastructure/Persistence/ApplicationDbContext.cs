@@ -17,6 +17,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<AttendanceRecord> AttendanceRecords => Set<AttendanceRecord>();
     public DbSet<Announcement> Announcements => Set<Announcement>();
     public DbSet<FeeStructure> FeeStructures => Set<FeeStructure>();
+    public DbSet<FeeCategory> FeeCategories => Set<FeeCategory>();
     public DbSet<StudentFeeAssignment> StudentFeeAssignments => Set<StudentFeeAssignment>();
     public DbSet<Payment> Payments => Set<Payment>();
     public DbSet<ZaloPayOrder> ZaloPayOrders => Set<ZaloPayOrder>();
@@ -87,10 +88,17 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             e.HasOne<ApplicationUser>().WithMany().HasForeignKey(x => x.CreatedByUserId).OnDelete(DeleteBehavior.Restrict);
         });
 
+        builder.Entity<FeeCategory>(e =>
+        {
+            e.Property(x => x.Name).HasMaxLength(128).IsRequired();
+            e.Property(x => x.Description).HasMaxLength(256);
+        });
+
         builder.Entity<FeeStructure>(e =>
         {
             e.Property(x => x.Name).HasMaxLength(128);
             e.HasOne(x => x.SchoolYear).WithMany().HasForeignKey(x => x.SchoolYearId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.FeeCategory).WithMany().HasForeignKey(x => x.FeeCategoryId).OnDelete(DeleteBehavior.Restrict);
         });
 
         builder.Entity<StudentFeeAssignment>(e =>

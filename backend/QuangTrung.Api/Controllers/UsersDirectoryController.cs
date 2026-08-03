@@ -18,7 +18,7 @@ public sealed class UsersDirectoryController(
     ApplicationDbContext db,
     UserManager<ApplicationUser> userManager) : ControllerBase
 {
-    public sealed record UserOptionRow(Guid Id, string Email);
+    public sealed record UserOptionRow(Guid Id, string Email, string FullName);
 
     public sealed record UserDirectoryRow(Guid Id, string Email, string FullName, IReadOnlyList<string> Roles, bool IsLocked);
 
@@ -125,7 +125,7 @@ public sealed class UsersDirectoryController(
         var rows = await db.Users.AsNoTracking()
             .Where(u => userIds.Contains(u.Id))
             .OrderBy(u => u.Email)
-            .Select(u => new UserOptionRow(u.Id, u.Email ?? u.Id.ToString()))
+            .Select(u => new UserOptionRow(u.Id, u.Email ?? u.Id.ToString(), u.FullName))
             .ToListAsync(ct);
         return Ok(rows);
     }

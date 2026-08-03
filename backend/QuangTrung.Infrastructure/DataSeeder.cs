@@ -140,6 +140,27 @@ public static class DataSeeder
                 });
             }
 
+            // Seed default FeeCategories if none exist
+            var catHocPhi = await db.FeeCategories.FirstOrDefaultAsync(x => x.Name == "Học phí", ct);
+            if (catHocPhi is null)
+            {
+                catHocPhi = new FeeCategory { Id = Guid.NewGuid(), Name = "Học phí", Description = "Khoản học phí chính quy", CreatedAt = DateTime.UtcNow };
+                db.FeeCategories.Add(catHocPhi);
+            }
+            var catTienAn = await db.FeeCategories.FirstOrDefaultAsync(x => x.Name == "Tiền ăn", ct);
+            if (catTienAn is null)
+            {
+                catTienAn = new FeeCategory { Id = Guid.NewGuid(), Name = "Tiền ăn", Description = "Tiền ăn bán trú của học sinh", CreatedAt = DateTime.UtcNow };
+                db.FeeCategories.Add(catTienAn);
+            }
+            var catKhac = await db.FeeCategories.FirstOrDefaultAsync(x => x.Name == "Khác", ct);
+            if (catKhac is null)
+            {
+                catKhac = new FeeCategory { Id = Guid.NewGuid(), Name = "Khác", Description = "Các khoản phụ phí khác", CreatedAt = DateTime.UtcNow };
+                db.FeeCategories.Add(catKhac);
+            }
+            await db.SaveChangesAsync(ct);
+
             var feeId = Guid.NewGuid();
             db.FeeStructures.Add(new FeeStructure
             {
@@ -148,6 +169,7 @@ public static class DataSeeder
                 Name = "Học phí tháng",
                 Amount = 500_000,
                 FeeType = FeeType.HocPhi,
+                FeeCategoryId = catHocPhi.Id,
                 CreatedAt = DateTime.UtcNow
             });
             db.StudentFeeAssignments.Add(new StudentFeeAssignment

@@ -398,7 +398,15 @@ export function StudentsPage() {
     try {
       const body = toUpsertBody(upsertForm);
       if (upsertMode === 'add') {
-        await createStudent(accessToken, body);
+        const createBody = {
+          fullName: body.fullName,
+          gender: body.gender,
+          dateOfBirth: body.dateOfBirth,
+          address: body.address,
+          healthNote: body.healthNote,
+          allergyNote: body.allergyNote,
+        };
+        await createStudent(accessToken, createBody);
         setSuccessMessage('Đã thêm học sinh thành công. Bạn có thể gán lớp trong cột Thao tác.');
         setPage(1);
       } else if (upsertStudentId) {
@@ -978,18 +986,20 @@ export function StudentsPage() {
                         />
                       </div>
                     </div>
-                    <div>
-                      <label className="mb-1 block text-xs font-bold uppercase text-slate-500">Trạng thái</label>
-                      <select
-                        value={upsertForm.status}
-                        onChange={(e) => setUpsertForm((f) => ({ ...f, status: Number(e.target.value) }))}
-                        className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-                      >
-                        <option value={0}>Đang học</option>
-                        <option value={1}>Tạm nghỉ</option>
-                        <option value={2}>Nghỉ học</option>
-                      </select>
-                    </div>
+                    {upsertMode === 'edit' ? (
+                      <div>
+                        <label className="mb-1 block text-xs font-bold uppercase text-slate-500">Trạng thái</label>
+                        <select
+                          value={upsertForm.status}
+                          onChange={(e) => setUpsertForm((f) => ({ ...f, status: Number(e.target.value) }))}
+                          className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                        >
+                          <option value={0}>Đang học</option>
+                          <option value={1}>Tạm nghỉ</option>
+                          <option value={2}>Nghỉ học</option>
+                        </select>
+                      </div>
+                    ) : null}
                     <div>
                       <label className="mb-1 block text-xs font-bold uppercase text-slate-500">Địa chỉ</label>
                       <input

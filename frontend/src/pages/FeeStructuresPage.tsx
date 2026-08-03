@@ -3,8 +3,10 @@ import {
   createFeeStructure,
   deleteFeeStructure,
   getFeeStructuresPaged,
+  getFeeCategories,
   getSchoolYearsPaged,
   updateFeeStructure,
+  type FeeCategoryRow,
   type FeeStructureRow,
   type SchoolYearRow,
   type UpsertFeeStructureBody,
@@ -23,22 +25,17 @@ function canWriteFees(roles: string[]) {
   return roles.some((r) => r === 'KeToan' || r === 'SuperAdmin');
 }
 
-function feeTypeLabel(t: number): string {
-  if (t === 0) return 'Học phí';
-  if (t === 1) return 'Tiền ăn';
-  if (t === 2) return 'Khác';
-  return `Loại ${t}`;
+function feeLabel(row: FeeStructureRow): string {
+  if (row.feeCategoryName) return row.feeCategoryName;
+  if (row.feeType === 0) return 'Học phí';
+  if (row.feeType === 1) return 'Tiền ăn';
+  if (row.feeType === 2) return 'Khác';
+  return `Loại ${row.feeType}`;
 }
 
 function formatVnd(n: number): string {
   return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format(n);
 }
-
-const FEE_TYPE_OPTIONS: { value: number; label: string }[] = [
-  { value: 0, label: 'Học phí' },
-  { value: 1, label: 'Tiền ăn' },
-  { value: 2, label: 'Khác' },
-];
 
 export function FeeStructuresPage() {
   const { accessToken, roles } = useAuth();
@@ -46,6 +43,7 @@ export function FeeStructuresPage() {
   const writePerm = canWriteFees(roles);
 
   const [years, setYears] = useState<SchoolYearRow[]>([]);
+  const [feeCategories, setFeeCategories] = useState<FeeCategoryRow[]>([]);
   const [schoolYearId, setSchoolYearId] = useState('');
   const [qInput, setQInput] = useState('');
   const [qDebounced, setQDebounced] = useState('');
@@ -58,7 +56,7 @@ export function FeeStructuresPage() {
 
   const [modalOpen, setModalOpen] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
-  const [form, setForm] = useState({ schoolYearId: '', name: '', amount: '', feeType: 0 });
+  const [form, setForm] = useState({ schoolYearId: '', name: '', amount: '', feeCategoryId: '' });
   const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
@@ -92,9 +90,20 @@ export function FeeStructuresPage() {
     }
   }, [accessToken, readPerm]);
 
+  const loadCategories = useCallback(async () => {
+    if (!accessToken || !readPerm) return;
+    try {
+      const cats = await getFeeCategories(accessToken);
+      setFeeCategories(cats);
+    } catch {
+      setFeeCategories([]);
+    }
+  }, [accessToken, readPerm]);
+
   useEffect(() => {
     void loadYears();
-  }, [loadYears]);
+    void loadCategories();
+  }, [loadYears, loadCategories]);
 
   const yearNameById = useMemo(() => Object.fromEntries(years.map((y) => [y.id, y.name])), [years]);
 
@@ -143,7 +152,7 @@ export function FeeStructuresPage() {
       schoolYearId: schoolYearId || years[0]?.id || '',
       name: '',
       amount: '',
-      feeType: 0,
+      feeCategoryId: feeCategories[0]?.id || '',
     });
     setModalOpen(true);
   };
@@ -155,7 +164,7 @@ export function FeeStructuresPage() {
       schoolYearId: row.schoolYearId,
       name: row.name,
       amount: String(row.amount),
-      feeType: row.feeType,
+      feeCategoryId: row.feeCategoryId ?? feeCategories[0]?.id ?? '',
     });
     setModalOpen(true);
   };
@@ -186,7 +195,8 @@ export function FeeStructuresPage() {
       schoolYearId: form.schoolYearId,
       name: form.name.trim(),
       amount,
-      feeType: form.feeType,
+      feeType: 0,
+      feeCategoryId: form.feeCategoryId || null,
     };
     setSaving(true);
     setError(null);
@@ -335,7 +345,7 @@ export function FeeStructuresPage() {
                   <div className="min-w-0">
                     <p className="truncate font-bold text-on-background">{row.name}</p>
                     <p className="text-xs text-slate-500">
-                      {feeTypeLabel(row.feeType)} · {yearNameById[row.schoolYearId] ?? 'Năm học'}
+                      {feeLabel(row)} · {yearNameById[row.schoolYearId] ?? 'Năm học'}
                     </p>
                   </div>
                 </div>
@@ -449,15 +459,19 @@ export function FeeStructuresPage() {
               <div>
                 <label className="mb-1 block text-xs font-semibold text-slate-600">Loại phí</label>
                 <select
-                  value={form.feeType}
-                  onChange={(e) => setForm((f) => ({ ...f, feeType: Number(e.target.value) }))}
+                  value={form.feeCategoryId}
+                  onChange={(e) => setForm((f) => ({ ...f, feeCategoryId: e.target.value }))}
                   className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
                 >
-                  {FEE_TYPE_OPTIONS.map((o) => (
-                    <option key={o.value} value={o.value}>
-                      {o.label}
-                    </option>
-                  ))}
+                  {feeCategories.length === 0 ? (
+                    <option value="">Chưa có loại phí — vào &quot;Loại phí&quot; để thêm</option>
+                  ) : (
+                    feeCategories.map((cat) => (
+                      <option key={cat.id} value={cat.id}>
+                        {cat.name}
+                      </option>
+                    ))
+                  )}
                 </select>
               </div>
             </div>

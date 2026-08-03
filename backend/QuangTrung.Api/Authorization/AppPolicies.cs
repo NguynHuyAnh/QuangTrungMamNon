@@ -35,6 +35,7 @@ public static class AppPolicies
 
     public const string FeesRead = "Fees.Read";
     public const string FeesWrite = "Fees.Write";
+    public const string FeeCategoriesWrite = "FeeCategories.Write";
     /// <summary>Đọc phân công học phí theo học sinh (kế toán + phụ huynh chỉ thấy con liên kết).</summary>
     public const string FeesReadAssignments = "Fees.ReadAssignments";
 

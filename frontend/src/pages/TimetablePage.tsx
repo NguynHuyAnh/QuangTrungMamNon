@@ -258,7 +258,7 @@ export function TimetablePage() {
             <label className="block text-sm"><span className="mb-1 block font-medium text-slate-600">Giáo viên</span>
               <select value={form.teacherId} onChange={(e) => setForm({ ...form, teacherId: e.target.value })} className="w-full rounded-lg border border-slate-200 px-3 py-2">
                 <option value="">— Chưa phân —</option>
-                {teachers.map((t) => <option key={t.id} value={t.id}>{t.email}</option>)}
+                {teachers.map((t) => <option key={t.id} value={t.id}>{t.fullName}</option>)}
               </select>
             </label>
             <div className="grid grid-cols-3 gap-3">

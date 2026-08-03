@@ -456,20 +456,48 @@ public static class ShowcaseDataSeeder
         }
         await db.SaveChangesAsync(ct);
 
-        // ---- Khoản phải thu (KHÔNG phải giao dịch): fee structure + gán cho học sinh theo tháng ----
-        async Task<FeeStructure> EnsureFee(string name, decimal amount, FeeType type)
+        // Seed default FeeCategories if none exist in ShowcaseDataSeeder
+        var catHocPhi = await db.FeeCategories.FirstOrDefaultAsync(x => x.Name == "Học phí", ct);
+        if (catHocPhi is null)
+        {
+            catHocPhi = new FeeCategory { Id = Guid.NewGuid(), Name = "Học phí", Description = "Khoản học phí chính quy", CreatedAt = now };
+            db.FeeCategories.Add(catHocPhi);
+        }
+        var catTienAn = await db.FeeCategories.FirstOrDefaultAsync(x => x.Name == "Tiền ăn", ct);
+        if (catTienAn is null)
+        {
+            catTienAn = new FeeCategory { Id = Guid.NewGuid(), Name = "Tiền ăn", Description = "Tiền ăn bán trú của học sinh", CreatedAt = now };
+            db.FeeCategories.Add(catTienAn);
+        }
+        var catKhac = await db.FeeCategories.FirstOrDefaultAsync(x => x.Name == "Khác", ct);
+        if (catKhac is null)
+        {
+            catKhac = new FeeCategory { Id = Guid.NewGuid(), Name = "Khác", Description = "Các khoản phụ phí khác", CreatedAt = now };
+            db.FeeCategories.Add(catKhac);
+        }
+        await db.SaveChangesAsync(ct);
+
+        async Task<FeeStructure> EnsureFee(string name, decimal amount, FeeType type, Guid feeCategoryId)
         {
             var f = await db.FeeStructures.FirstOrDefaultAsync(x => x.Name == name && x.SchoolYearId == year.Id, ct);
-            if (f is not null) return f;
-            f = new FeeStructure { Id = Guid.NewGuid(), SchoolYearId = year.Id, Name = name, Amount = amount, FeeType = type, CreatedAt = now };
+            if (f is not null)
+            {
+                if (f.FeeCategoryId == null)
+                {
+                    f.FeeCategoryId = feeCategoryId;
+                    await db.SaveChangesAsync(ct);
+                }
+                return f;
+            }
+            f = new FeeStructure { Id = Guid.NewGuid(), SchoolYearId = year.Id, Name = name, Amount = amount, FeeType = type, FeeCategoryId = feeCategoryId, CreatedAt = now };
             db.FeeStructures.Add(f);
             await db.SaveChangesAsync(ct);
             return f;
         }
 
-        var feeHocPhi = await EnsureFee("Học phí tháng", 500_000m, FeeType.HocPhi);
-        var feeTienAn = await EnsureFee("Tiền ăn tháng", 660_000m, FeeType.TienAn);
-        var feeBanTru = await EnsureFee("Phí bán trú", 200_000m, FeeType.Khac);
+        var feeHocPhi = await EnsureFee("Học phí tháng", 500_000m, FeeType.HocPhi, catHocPhi.Id);
+        var feeTienAn = await EnsureFee("Tiền ăn tháng", 660_000m, FeeType.TienAn, catTienAn.Id);
+        var feeBanTru = await EnsureFee("Phí bán trú", 200_000m, FeeType.Khac, catKhac.Id);
 
         var existingAssign = await db.StudentFeeAssignments.AsNoTracking()
             .Select(a => new { a.StudentId, a.FeeStructureId, a.Month })

@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { isStaffRole, useAuth } from './auth/AuthContext';
+import { canStaffAccessTimetableNav } from './auth/staffNavAccess';
 import { ProtectedRoute } from './auth/ProtectedRoute';
 import { AdminLayout } from './layouts/AdminLayout';
 import { ParentLayout } from './layouts/ParentLayout';
@@ -18,6 +19,7 @@ import { StaffLeavePage } from './pages/StaffLeavePage';
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
 import { FeeAssignmentsPage } from './pages/FeeAssignmentsPage';
 import { FeeStructuresPage } from './pages/FeeStructuresPage';
+import { FeeCategoriesPage } from './pages/FeeCategoriesPage';
 import { InvoicesPage } from './pages/InvoicesPage';
 import { LoginPage } from './pages/LoginPage';
 import { PaymentsPage } from './pages/PaymentsPage';
@@ -39,6 +41,8 @@ function HomeRedirect() {
 }
 
 export default function App() {
+  const { roles } = useAuth();
+
   return (
     <Routes>
       <Route path="/" element={<HomeRedirect />} />
@@ -66,11 +70,14 @@ export default function App() {
         <Route path="dishes" element={<DishesPage />} />
         <Route path="menu" element={<MenuPage />} />
         <Route path="subjects" element={<SubjectsPage />} />
-        <Route path="timetable" element={<TimetablePage />} />
+        {canStaffAccessTimetableNav(roles) && (
+          <Route path="timetable" element={<TimetablePage />} />
+        )}
         <Route path="health" element={<HealthReportsPage />} />
         <Route path="external-subjects" element={<ExternalSubjectsPage />} />
         <Route path="student-leave" element={<StudentLeavePage />} />
         <Route path="staff-leave" element={<StaffLeavePage />} />
+        <Route path="fee-categories" element={<FeeCategoriesPage />} />
         <Route path="fee-structures" element={<FeeStructuresPage />} />
         <Route path="fee-assignments" element={<FeeAssignmentsPage />} />
         <Route path="payments" element={<PaymentsPage />} />

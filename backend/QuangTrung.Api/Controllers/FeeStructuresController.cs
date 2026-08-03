@@ -14,7 +14,7 @@ namespace QuangTrung.Api.Controllers;
 [Route("api/fee-structures")]
 public sealed class FeeStructuresController(ApplicationDbContext db) : ControllerBase
 {
-    public sealed record FeeRow(Guid Id, Guid SchoolYearId, string Name, decimal Amount, FeeType FeeType);
+    public sealed record FeeRow(Guid Id, Guid SchoolYearId, string Name, decimal Amount, FeeType FeeType, Guid? FeeCategoryId, string? FeeCategoryName);
 
     [HttpGet]
     [Authorize(Policy = AppPolicies.FeesRead)]
@@ -33,7 +33,7 @@ public sealed class FeeStructuresController(ApplicationDbContext db) : Controlle
             query = query.Where(x => x.Name.Contains(q.Trim()));
         var total = await query.CountAsync(ct);
         var items = await query.OrderBy(x => x.Name).Skip(skip).Take(ps)
-            .Select(x => new FeeRow(x.Id, x.SchoolYearId, x.Name, x.Amount, x.FeeType))
+            .Select(x => new FeeRow(x.Id, x.SchoolYearId, x.Name, x.Amount, x.FeeType, x.FeeCategoryId, x.FeeCategory != null ? x.FeeCategory.Name : null))
             .ToListAsync(ct);
         return Ok(new PagedResult<FeeRow> { Items = items, TotalCount = total, Page = p, PageSize = ps });
     }
@@ -44,12 +44,12 @@ public sealed class FeeStructuresController(ApplicationDbContext db) : Controlle
     {
         var row = await db.FeeStructures.AsNoTracking()
             .Where(x => x.Id == id && !x.IsDeleted)
-            .Select(x => new FeeRow(x.Id, x.SchoolYearId, x.Name, x.Amount, x.FeeType))
+            .Select(x => new FeeRow(x.Id, x.SchoolYearId, x.Name, x.Amount, x.FeeType, x.FeeCategoryId, x.FeeCategory != null ? x.FeeCategory.Name : null))
             .FirstOrDefaultAsync(ct);
         return row is null ? NotFound() : Ok(row);
     }
 
-    public sealed record UpsertFeeDto(Guid SchoolYearId, string Name, decimal Amount, FeeType FeeType);
+    public sealed record UpsertFeeDto(Guid SchoolYearId, string Name, decimal Amount, FeeType FeeType, Guid? FeeCategoryId);
 
     [HttpPost]
     [Authorize(Policy = AppPolicies.FeesWrite)]
@@ -62,8 +62,21 @@ public sealed class FeeStructuresController(ApplicationDbContext db) : Controlle
             Name = dto.Name.Trim(),
             Amount = dto.Amount,
             FeeType = dto.FeeType,
+            FeeCategoryId = dto.FeeCategoryId,
             CreatedAt = DateTime.UtcNow
         };
+
+        if (dto.FeeCategoryId.HasValue)
+        {
+            var cat = await db.FeeCategories.FindAsync(dto.FeeCategoryId.Value, ct);
+            if (cat != null)
+            {
+                if (cat.Name == "Học phí") entity.FeeType = FeeType.HocPhi;
+                else if (cat.Name == "Tiền ăn") entity.FeeType = FeeType.TienAn;
+                else entity.FeeType = FeeType.Khac;
+            }
+        }
+
         db.FeeStructures.Add(entity);
         await db.SaveChangesAsync(ct);
         return Created($"/api/fee-structures/{entity.Id}", new { entity.Id });
@@ -80,6 +93,19 @@ public sealed class FeeStructuresController(ApplicationDbContext db) : Controlle
         entity.Name = dto.Name.Trim();
         entity.Amount = dto.Amount;
         entity.FeeType = dto.FeeType;
+        entity.FeeCategoryId = dto.FeeCategoryId;
+
+        if (dto.FeeCategoryId.HasValue)
+        {
+            var cat = await db.FeeCategories.FindAsync(dto.FeeCategoryId.Value, ct);
+            if (cat != null)
+            {
+                if (cat.Name == "Học phí") entity.FeeType = FeeType.HocPhi;
+                else if (cat.Name == "Tiền ăn") entity.FeeType = FeeType.TienAn;
+                else entity.FeeType = FeeType.Khac;
+            }
+        }
+
         entity.UpdatedAt = DateTime.UtcNow;
         await db.SaveChangesAsync(ct);
         return NoContent();

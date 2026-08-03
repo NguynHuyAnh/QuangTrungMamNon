@@ -42,6 +42,7 @@ const navItems: NavItem[] = [
   { to: '/app/external-subjects', label: 'Môn năng khiếu', icon: 'sports_gymnastics', visibleIf: canStaffAccessExternalSubjectsNav },
   { to: '/app/student-leave', label: 'Nghỉ phép HS', icon: 'event_busy', visibleIf: canStaffAccessStudentLeaveNav },
   { to: '/app/staff-leave', label: 'Nghỉ phép GV', icon: 'badge', visibleIf: canStaffAccessStaffLeaveNav },
+  { to: '/app/fee-categories', label: 'Loại phí', icon: 'category', feesModule: true },
   { to: '/app/fee-structures', label: 'Biểu phí', icon: 'request_quote', feesModule: true },
   { to: '/app/fee-assignments', label: 'Gán phí', icon: 'assignment', feesModule: true },
   { to: '/app/payments', label: 'Thanh toán', icon: 'payments', feesModule: true },
@@ -183,11 +184,6 @@ export function AdminLayout() {
             </div>
           </div>
           <div className="flex flex-shrink-0 items-center gap-2 sm:gap-4 md:gap-6">
-            <nav className="mr-2 hidden items-center gap-6 lg:flex xl:gap-8">
-              <span className="flex h-14 items-center border-b-2 border-primary-container text-sm font-medium text-primary-container xl:h-16">
-                Trang chủ
-              </span>
-            </nav>
             <div className="flex items-center gap-1 sm:gap-2">
               <div className="flex items-center gap-2 pl-0 sm:gap-3 sm:pl-2">
                 <div className="hidden text-right sm:block">

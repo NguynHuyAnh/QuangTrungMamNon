@@ -103,6 +103,8 @@ builder.Services.AddAuthorization(options =>
         p => p.RequireRole(AppRoles.KeToan, AppRoles.BanGiamHieu, AppRoles.SuperAdmin));
     options.AddPolicy(AppPolicies.FeesWrite,
         p => p.RequireRole(AppRoles.KeToan, AppRoles.SuperAdmin));
+    options.AddPolicy(AppPolicies.FeeCategoriesWrite,
+        p => p.RequireRole(AppRoles.SuperAdmin));
     options.AddPolicy(AppPolicies.FeesReadAssignments,
         p => p.RequireRole(AppRoles.KeToan, AppRoles.BanGiamHieu, AppRoles.SuperAdmin, AppRoles.PhuHuynh));
 

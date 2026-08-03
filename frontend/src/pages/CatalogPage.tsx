@@ -90,8 +90,8 @@ export function CatalogPage() {
 
   const yearNameById = useMemo(() => Object.fromEntries(years.map((y) => [y.id, y.name])), [years]);
   const gradeNameById = useMemo(() => Object.fromEntries(grades.map((g) => [g.id, g.name])), [grades]);
-  const homeroomEmailById = useMemo(
-    () => Object.fromEntries(homeroomOptions.map((u) => [u.id, u.email])),
+  const homeroomNameById = useMemo(
+    () => Object.fromEntries(homeroomOptions.map((u) => [u.id, u.fullName])),
     [homeroomOptions],
   );
 
@@ -715,7 +715,7 @@ export function CatalogPage() {
                       <td className="px-6 py-4 text-sm text-slate-600">{gradeNameById[c.gradeId] ?? '—'}</td>
                       <td className="px-6 py-4 text-sm text-slate-600">{c.capacity}</td>
                       <td className="px-6 py-4 text-sm text-slate-600">
-                        {c.homeroomTeacherId ? homeroomEmailById[c.homeroomTeacherId] ?? c.homeroomTeacherId : '—'}
+                        {c.homeroomTeacherId ? homeroomNameById[c.homeroomTeacherId] ?? c.homeroomTeacherId : '—'}
                       </td>
                       <td className="px-6 py-4 text-right">
                         {write ? (

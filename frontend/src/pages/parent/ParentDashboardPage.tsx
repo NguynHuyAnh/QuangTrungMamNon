@@ -40,6 +40,7 @@ export function ParentDashboardPage() {
   const [linkCode, setLinkCode] = useState('');
   const [linkBusy, setLinkBusy] = useState(false);
   const [linkHint, setLinkHint] = useState<string | null>(null);
+  const [linkFormOpen, setLinkFormOpen] = useState(false);
 
   useEffect(() => {
     if (!accessToken) return;
@@ -78,6 +79,7 @@ export function ParentDashboardPage() {
         setLinkHint('Đã liên kết. Danh sách con đã được cập nhật.');
       }
       setLinkCode('');
+      setLinkFormOpen(true);
     } catch (err) {
       setLinkHint(err instanceof Error ? err.message : 'Không liên kết được.');
     } finally {
@@ -86,6 +88,7 @@ export function ParentDashboardPage() {
   }
 
   const greetName = email?.split('@')[0] ?? 'bạn';
+  const showLinkForm = linkFormOpen || children.length === 0;
 
   return (
     <>
@@ -161,25 +164,36 @@ export function ParentDashboardPage() {
 
       <div className="mt-10 grid grid-cols-12 gap-gutter">
         <div className="col-span-12 space-y-lg lg:col-span-8">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <h2 className="flex items-center gap-3 font-h2 text-h2 text-primary">
               <MaterialSymbol name="family_history" className="text-secondary" />
               Các con của bạn
             </h2>
+            <button
+              type="button"
+              onClick={() => setLinkFormOpen((prev) => !prev)}
+              className="inline-flex items-center justify-center gap-2 rounded-lg border border-primary/30 bg-white px-4 py-2.5 text-sm font-semibold text-primary shadow-sm transition hover:bg-blue-50"
+            >
+              <MaterialSymbol name="person_add" className="text-[18px]" />
+              Liên kết thêm học sinh
+            </button>
           </div>
-          {!loading && !error && children.length === 0 ? (
+          {showLinkForm ? (
             <div className="rounded-xl border border-dashed border-blue-200 bg-gradient-to-br from-blue-50/90 to-white p-6 shadow-sm">
               <p className="text-center text-sm font-medium text-slate-700">
-                Chưa có học sinh liên kết với tài khoản này. Bạn có thể nhập <strong>mã</strong> giống trên màn hình Quản lý
-                học sinh (mã đăng ký, UUID đầy đủ, hoặc 8 ký tự đầu ID khi trường hợp duy nhất).
+                {children.length === 0
+                  ? 'Chưa có học sinh liên kết với tài khoản này. Bạn có thể nhập mã giống trên màn hình Quản lý học sinh (mã đăng ký, UUID đầy đủ, hoặc 8 ký tự đầu ID khi trường hợp duy nhất).'
+                  : 'Bạn có thể liên kết thêm học sinh bằng mã đăng ký, UUID hoặc 8 ký tự đầu ID.'}
               </p>
-              <p className="mt-2 text-center text-xs text-slate-500">
-                Tài khoản tạo trước đây mà chưa nhập mã lúc đăng ký — dùng ô bên dưới. Tài khoản mới nên điền mã tại{' '}
-                <Link to="/register-parent" className="font-semibold text-primary underline">
-                  Đăng ký phụ huynh
-                </Link>
-                .
-              </p>
+              {children.length === 0 ? (
+                <p className="mt-2 text-center text-xs text-slate-500">
+                  Tài khoản tạo trước đây mà chưa nhập mã lúc đăng ký — dùng ô bên dưới. Tài khoản mới nên điền mã tại{' '}
+                  <Link to="/register-parent" className="font-semibold text-primary underline">
+                    Đăng ký phụ huynh
+                  </Link>
+                  .
+                </p>
+              ) : null}
               <form
                 className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-end"
                 onSubmit={(ev) => void onLinkChild(ev)}
@@ -200,7 +214,7 @@ export function ParentDashboardPage() {
                   className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-primary px-6 py-2.5 text-sm font-bold text-white shadow-md transition hover:bg-primary-container disabled:opacity-50"
                 >
                   <MaterialSymbol name="link" className="text-[20px]" />
-                  {linkBusy ? 'Đang xử lý…' : 'Liên kết ngay'}
+                  {linkBusy ? 'Đang xử lý…' : children.length === 0 ? 'Liên kết ngay' : 'Liên kết thêm'}
                 </button>
               </form>
               {linkHint ? (

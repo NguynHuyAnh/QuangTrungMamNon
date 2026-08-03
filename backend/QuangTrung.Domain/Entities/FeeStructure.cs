@@ -9,6 +9,8 @@ public class FeeStructure
     public string Name { get; set; } = string.Empty;
     public decimal Amount { get; set; }
     public FeeType FeeType { get; set; }
+    public Guid? FeeCategoryId { get; set; }
+    public FeeCategory? FeeCategory { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
     public bool IsDeleted { get; set; }

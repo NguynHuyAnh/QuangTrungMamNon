@@ -327,7 +327,7 @@ export function ExternalSubjectsPage() {
             <label className="block text-sm"><span className="mb-1 block font-medium text-slate-600">Giáo viên phụ trách</span>
               <select value={catForm.teacherId} onChange={(e) => setCatForm({ ...catForm, teacherId: e.target.value })} className="w-full rounded-lg border border-slate-200 px-3 py-2">
                 <option value="">— Không gán —</option>
-                {teachers.map((t) => <option key={t.id} value={t.id}>{t.email}</option>)}
+                {teachers.map((t) => <option key={t.id} value={t.id}>{t.fullName}</option>)}
               </select>
             </label>
             <div className="grid grid-cols-2 gap-3">

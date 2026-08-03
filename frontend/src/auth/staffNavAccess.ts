@@ -47,7 +47,7 @@ export function canStaffAccessSubjectsNav(roles: string[]) {
 
 /** Thời khóa biểu (Timetable.Read) — mọi staff đã đăng nhập. */
 export function canStaffAccessTimetableNav(roles: string[]) {
-  return roles.some((r) => r === 'BanGiamHieu' || r === 'GiaoVien' || r === 'KeToan' || r === 'SuperAdmin');
+  return roles.some((r) => r === 'BanGiamHieu' || r === 'GiaoVien' || r === 'SuperAdmin');
 }
 
 /** Báo cáo sức khỏe (Health.Read) — BGH / GV / SuperAdmin. */
